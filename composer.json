@@ -1,0 +1,36 @@
+{
+    "name": "php-etl/pipeline",
+    "description": "This library implements the Extract-Transform-Load pattern asynchronously in PHP with the help of iterators and generators",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kiboko SAS",
+            "homepage": "http://kiboko.fr"
+        },
+        {
+            "name": "Grégory Planchat",
+            "email": "gregory@kiboko.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.1",
+        "php-etl/contracts": "1.0.x-dev",
+        "php-etl/bucket": "1.0.x-dev",
+        "psr/log": "^1.1@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kiboko\\Component\\ETL\\Pipeline\\": ""
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^5.1"
+    }
+}
