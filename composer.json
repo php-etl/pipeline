@@ -15,7 +15,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.1",
+        "php": "^7.4",
         "php-etl/contracts": "1.0.x-dev",
         "php-etl/bucket": "1.0.x-dev",
         "psr/log": "^1.1@dev"
@@ -36,7 +36,7 @@
         }
     },
     "require-dev": {
-        "php-xdebug": "*",
+        "ext-xdebug": "*",
         "phpspec/phpspec": "^5.1",
         "phpunit/phpunit": "^7.0",
         "johnkary/phpunit-speedtrap": "^3.1@dev",
