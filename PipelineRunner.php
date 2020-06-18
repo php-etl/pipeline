@@ -6,8 +6,6 @@ use Kiboko\Component\ETL\Contracts\AcceptanceResultBucketInterface;
 use Kiboko\Component\ETL\Contracts\PipelineRunnerInterface;
 use Kiboko\Component\ETL\Contracts\RejectionResultBucketInterface;
 use Kiboko\Component\ETL\Contracts\ResultBucketInterface;
-use Kiboko\Component\ETL\Core\Exception\UnexpectedYieldedValueType;
-use Kiboko\Component\ETL\Core\Iterator\ResumableIterator;
 
 class PipelineRunner implements PipelineRunnerInterface
 {

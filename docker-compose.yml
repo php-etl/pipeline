@@ -33,13 +33,25 @@ services:
   phpunit:
     extends:
       service: sh
-    entrypoint: [ "bin/phpunit", "--configuration=phpunit.xml" ]
+    entrypoint: [ "vendor/bin/phpunit", "--configuration=.phpunit.xml" ]
     restart: "no"
 
   phpunit-xdebug:
     extends:
       service: sh-xdebug
-    entrypoint: [ "bin/phpunit", "--configuration=phpunit.xml" ]
+    entrypoint: [ "vendor/bin/phpunit", "--configuration=.phpunit.xml" ]
+    restart: "no"
+
+  phpspec:
+    extends:
+      service: sh
+    entrypoint: [ "vendor/bin/phpspec" ]
+    restart: "no"
+
+  phpspec-xdebug:
+    extends:
+      service: sh-xdebug
+    entrypoint: [ "vendor/bin/phpspec" ]
     restart: "no"
 
 volumes:

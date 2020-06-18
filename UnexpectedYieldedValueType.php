@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiboko\Component\ETL\Core\Exception;
+namespace Kiboko\Component\ETL\Pipeline;
 
 final class UnexpectedYieldedValueType extends \UnexpectedValueException
 {
