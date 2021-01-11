@@ -1,6 +1,6 @@
 <?php
 
-namespace Kiboko\Component\ETL\Pipeline;
+namespace Kiboko\Component\Pipeline;
 
 class ResumableIterator implements \Iterator
 {

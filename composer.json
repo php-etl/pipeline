@@ -17,12 +17,13 @@
     "require": {
         "php": "^8.0",
         "php-etl/pipeline-contracts": "0.1.x-dev",
-        "php-etl/bucket-contracts": "0.1.x-dev",
-        "psr/log": "^1.1@dev"
+        "psr/log": "^1.1@dev",
+        "php-etl/bucket": "0.1.x-dev",
+        "php-etl/bucket-contracts": "0.1.x-dev"
     },
     "autoload": {
         "psr-4": {
-            "Kiboko\\Component\\ETL\\Pipeline\\": ""
+            "Kiboko\\Component\\Pipeline\\": ""
         }
     },
     "autoload-dev": {

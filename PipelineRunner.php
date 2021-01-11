@@ -1,11 +1,11 @@
 <?php
 
-namespace Kiboko\Component\ETL\Pipeline;
+namespace Kiboko\Component\Pipeline;
 
-use Kiboko\Component\ETL\Contracts\AcceptanceResultBucketInterface;
-use Kiboko\Component\ETL\Contracts\PipelineRunnerInterface;
-use Kiboko\Component\ETL\Contracts\RejectionResultBucketInterface;
-use Kiboko\Component\ETL\Contracts\ResultBucketInterface;
+use Kiboko\Contract\Bucket\AcceptanceResultBucketInterface;
+use Kiboko\Contract\Bucket\RejectionResultBucketInterface;
+use Kiboko\Contract\Bucket\ResultBucketInterface;
+use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
 
 class PipelineRunner implements PipelineRunnerInterface
 {

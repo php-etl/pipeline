@@ -1,20 +1,20 @@
 <?php
 
-namespace Kiboko\Component\ETL\Pipeline;
+namespace Kiboko\Component\Pipeline;
 
-use Kiboko\Component\ETL\Bucket\AcceptanceAppendableResultBucket;
-use Kiboko\Component\ETL\Contracts\ExtractingInterface;
-use Kiboko\Component\ETL\Contracts\ExtractorInterface;
-use Kiboko\Component\ETL\Contracts\FlushableInterface;
-use Kiboko\Component\ETL\Contracts\ForkingInterface;
-use Kiboko\Component\ETL\Contracts\LoaderInterface;
-use Kiboko\Component\ETL\Contracts\LoadingInterface;
-use Kiboko\Component\ETL\Contracts\PipelineInterface;
-use Kiboko\Component\ETL\Contracts\PipelineRunnerInterface;
-use Kiboko\Component\ETL\Contracts\RunnableInterface;
-use Kiboko\Component\ETL\Contracts\TransformerInterface;
-use Kiboko\Component\ETL\Contracts\TransformingInterface;
-use Kiboko\Component\ETL\Contracts\WalkableInterface;
+use Kiboko\Component\Bucket\AcceptanceAppendableResultBucket;
+use Kiboko\Contract\Pipeline\ExtractingInterface;
+use Kiboko\Contract\Pipeline\ExtractorInterface;
+use Kiboko\Contract\Pipeline\FlushableInterface;
+use Kiboko\Contract\Pipeline\ForkingInterface;
+use Kiboko\Contract\Pipeline\LoaderInterface;
+use Kiboko\Contract\Pipeline\LoadingInterface;
+use Kiboko\Contract\Pipeline\PipelineInterface;
+use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
+use Kiboko\Contract\Pipeline\RunnableInterface;
+use Kiboko\Contract\Pipeline\TransformerInterface;
+use Kiboko\Contract\Pipeline\TransformingInterface;
+use Kiboko\Contract\Pipeline\WalkableInterface;
 
 class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface, RunnableInterface
 {

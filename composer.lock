@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eabb9f82c84046366cf1c00dcd5ed9a5",
+    "content-hash": "f2cd2f150597e448857e561a36a0575d",
     "packages": [
         {
             "name": "php-etl/bucket",
@@ -12,30 +12,33 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket.git",
-                "reference": "540988aed3e73aff6015b30c275f1bb9689dab68"
+                "reference": "ed8109f7c1f46aa3189bd6ed88def2e917673367"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket/zipball/540988aed3e73aff6015b30c275f1bb9689dab68",
-                "reference": "540988aed3e73aff6015b30c275f1bb9689dab68",
+                "url": "https://api.github.com/repos/php-etl/bucket/zipball/ed8109f7c1f46aa3189bd6ed88def2e917673367",
+                "reference": "ed8109f7c1f46aa3189bd6ed88def2e917673367",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1",
-                "php-etl/contracts": "1.0.x-dev"
+                "php": "^8.0",
+                "php-etl/bucket-contracts": "^0.1.0@dev"
             },
             "require-dev": {
-                "phpspec/phpspec": "^5.1"
+                "friends-of-phpspec/phpspec-code-coverage": "6.x-dev",
+                "phpspec/phpspec": "^7.0",
+                "phpstan/phpstan": "^0.12"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "0.1.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Kiboko\\Component\\ETL\\Bucket\\": ""
+                    "Kiboko\\Component\\Bucket\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -44,43 +47,51 @@
             ],
             "authors": [
                 {
-                    "name": "Grégory Planchat",
-                    "email": "gregory@kiboko.fr"
-                },
-                {
                     "name": "Kiboko SAS",
                     "homepage": "http://kiboko.fr"
+                },
+                {
+                    "name": "Grégory Planchat",
+                    "email": "gregory@kiboko.fr"
                 }
             ],
             "description": "This library implements the Extract-Transform-Load pattern asynchronously in PHP with the help of iterators and generators",
-            "time": "2019-07-17T20:16:05+00:00"
+            "support": {
+                "issues": "https://github.com/php-etl/bucket/issues",
+                "source": "https://github.com/php-etl/bucket/tree/master"
+            },
+            "time": "2021-01-11T13:48:54+00:00"
         },
         {
-            "name": "php-etl/contracts",
+            "name": "php-etl/bucket-contracts",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-etl/contracts.git",
-                "reference": "a48f346eaac25ebaccb6ad821b41ddbb14ee8f99"
+                "url": "https://github.com/php-etl/bucket-contracts.git",
+                "reference": "c2d2df6eaca0f391ec275cd797b2e7cfa5c24fc5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/contracts/zipball/a48f346eaac25ebaccb6ad821b41ddbb14ee8f99",
-                "reference": "a48f346eaac25ebaccb6ad821b41ddbb14ee8f99",
+                "url": "https://api.github.com/repos/php-etl/bucket-contracts/zipball/c2d2df6eaca0f391ec275cd797b2e7cfa5c24fc5",
+                "reference": "c2d2df6eaca0f391ec275cd797b2e7cfa5c24fc5",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1"
+                "php": "^8.0"
             },
+            "require-dev": {
+                "phpstan/phpstan": "0.12.x-dev"
+            },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "0.1.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Kiboko\\Component\\ETL\\Contracts\\": ""
+                    "Kiboko\\Contract\\Bucket\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -89,16 +100,74 @@
             ],
             "authors": [
                 {
+                    "name": "Kiboko SAS",
+                    "homepage": "http://kiboko.fr"
+                },
+                {
                     "name": "Grégory Planchat",
                     "email": "gregory@kiboko.fr"
-                },
+                }
+            ],
+            "description": "This library describes contracts for the data-interchange buckets.",
+            "support": {
+                "issues": "https://github.com/php-etl/bucket-contracts/issues",
+                "source": "https://github.com/php-etl/bucket-contracts/tree/master"
+            },
+            "time": "2021-01-11T13:21:08+00:00"
+        },
+        {
+            "name": "php-etl/pipeline-contracts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-etl/pipeline-contracts.git",
+                "reference": "9877ab59ab1ed4932c23c9a402d125d6db4e8282"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/9877ab59ab1ed4932c23c9a402d125d6db4e8282",
+                "reference": "9877ab59ab1ed4932c23c9a402d125d6db4e8282",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0",
+                "php-etl/bucket-contracts": "^0.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12.0@dev"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kiboko\\Contract\\Pipeline\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
                 {
                     "name": "Kiboko SAS",
                     "homepage": "http://kiboko.fr"
+                },
+                {
+                    "name": "Grégory Planchat",
+                    "email": "gregory@kiboko.fr"
                 }
             ],
-            "description": "This library implements the Extract-Transform-Load pattern asynchronously in PHP with the help of iterators and generators",
-            "time": "2019-07-17T20:11:57+00:00"
+            "description": "This library describes contracts for the Extract-Transform-Load pattern.",
+            "support": {
+                "issues": "https://github.com/php-etl/pipeline-contracts/issues",
+                "source": "https://github.com/php-etl/pipeline-contracts/tree/master"
+            },
+            "time": "2021-01-11T13:09:51+00:00"
         },
         {
             "name": "psr/log",
@@ -2425,16 +2494,20 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "php-etl/contracts": 20,
-        "php-etl/bucket": 20,
+        "php-etl/pipeline-contracts": 20,
         "psr/log": 20,
+        "php-etl/bucket": 20,
+        "php-etl/bucket-contracts": 20,
         "johnkary/phpunit-speedtrap": 20,
         "mybuilder/phpunit-accelerator": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.1"
+        "php": "^8.0"
     },
-    "platform-dev": []
+    "platform-dev": {
+        "ext-xdebug": "*"
+    },
+    "plugin-api-version": "2.0.0"
 }
