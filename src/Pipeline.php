@@ -18,28 +18,15 @@ use Kiboko\Contract\Pipeline\WalkableInterface;
 
 class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface, RunnableInterface
 {
-    /**
-     * @var \AppendIterator
-     */
-    private $source;
+    private \AppendIterator $source;
+    private iterable $subject;
 
-    /**
-     * @var iterable
-     */
-    private $subject;
-
-    /**
-     * @var PipelineRunnerInterface
-     */
-    private $runner;
-
-    public function __construct(PipelineRunnerInterface $runner, ?\Iterator $source = null)
+    public function __construct(private PipelineRunnerInterface $runner, ?\Iterator $source = null)
     {
         $this->source = new \AppendIterator();
         $this->source->append($source ?? new \EmptyIterator());
 
         $this->subject = new \NoRewindIterator($this->source);
-        $this->runner = $runner;
     }
 
     public function feed(...$data): void
@@ -52,17 +39,19 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
         $runner = $this->runner;
         $handlers = [];
         foreach ($builders as $builder) {
-            $handlers[] = $handler = new class(new Pipeline($runner)) {
-                /** @var PipelineInterface */
-                public $pipeline;
+            $handlers[] = $handler = new class(new Pipeline($runner)) implements \IteratorAggregate {
                 /** @var \Iterator */
                 public $consumer;
 
-                public function __construct(PipelineInterface $pipeline)
+                public function __construct(public PipelineInterface $pipeline)
                 {
-                    $this->pipeline = $pipeline;
                     $this->consumer = $pipeline->walk();
                     $this->consumer->rewind();
+                }
+
+                public function getIterator()
+                {
+                    return $this->consumer;
                 }
             };
 
@@ -70,17 +59,18 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
         }
 
         $this->subject = $this->runner->run($this->subject, (function(array $handlers) {
-            while (true) {
-                $line = yield;
+            $line = yield;
 
+            while (true) {
                 $bucket = new AcceptanceAppendableResultBucket();
+
                 /** @var \Iterator $handler */
                 foreach ($handlers as $handler) {
                     $handler->pipeline->feed($line);
-                    $bucket->append(new \NoRewindIterator($handler->consumer));
+                    $bucket->append(new \NoRewindIterator($handler));
                 }
 
-                yield $bucket;
+                $line = yield $bucket;
             }
         })($handlers));
 
@@ -94,7 +84,14 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
      */
     public function extract(ExtractorInterface $extractor): ExtractingInterface
     {
-        $this->source->append($extractor->extract());
+        $extract = $extractor->extract();
+        if (is_array($extract)) {
+            $this->source->append(new \ArrayIterator($extract));
+        } else if ($extract instanceof \Traversable) {
+            $this->source->append(new \IteratorIterator($extract));
+        } else {
+            throw new \RuntimeException('Invalid data source, expecting array or Traversable.');
+        }
 
         if ($extractor instanceof FlushableInterface) {
             $this->source->append((function(FlushableInterface $flushable) {
