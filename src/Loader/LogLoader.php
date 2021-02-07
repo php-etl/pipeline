@@ -23,10 +23,8 @@ final class LogLoader implements LoaderInterface
     public function load(): \Generator
     {
         $line = yield;
-        while (true) {
+        do {
             $this->logger->log($this->logLevel, var_export($line, true));
-
-            $line = yield new AcceptanceResultBucket($line);
-        }
+        } while ($line = yield new AcceptanceResultBucket($line));
     }
 }

@@ -23,7 +23,7 @@ class ColumnTrimTransformer implements TransformerInterface
     public function transform(): \Generator
     {
         $line = yield;
-        while (true) {
+        do {
             foreach ($this->columnsToTrim as $column) {
                 if (!isset($line[$column])) {
                     continue;
@@ -31,8 +31,6 @@ class ColumnTrimTransformer implements TransformerInterface
 
                 $line[$column] = trim($line[$column]);
             }
-
-            $line = yield new AcceptanceResultBucket($line);
-        }
+        } while ($line = yield new AcceptanceResultBucket($line));
     }
 }

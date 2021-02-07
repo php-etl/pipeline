@@ -27,12 +27,9 @@ abstract class StreamLoader implements LoaderInterface
     public function load(): \Generator
     {
         $line = yield;
-
-        while (true) {
+        do {
             fwrite($this->stream, $this->formatLine($line));
-
-            $line = yield new AcceptanceResultBucket($line);
-        }
+        } while ($line = yield new AcceptanceResultBucket($line));
     }
 
     abstract protected function formatLine($line);

@@ -24,8 +24,7 @@ class CallableTransformer implements TransformerInterface
     public function transform(): \Generator
     {
         $line = yield;
-        while (true) {
-            $line = yield new AcceptanceResultBucket(($this->callback)($line));
-        }
+        do {
+        } while ($line = yield new AcceptanceResultBucket(($this->callback)($line)));
     }
 }
