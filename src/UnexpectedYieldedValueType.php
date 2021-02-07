@@ -18,7 +18,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
         parent::__construct($message, $code, $previous);
     }
 
-    public static function expectingType(\Generator $coroutine, string $expectedType, $actual, int $code = null, ?\Exception $previous = null): self
+    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = null, ?\Exception $previous = null): self
     {
         try {
             $re = new \ReflectionGenerator($coroutine);
@@ -37,7 +37,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                 strtr(
                     'Invalid yielded data, was expecting %expected%, got %actual%. Coroutine declared in %function%, running in %file%:%line%.',
                     [
-                        '%expected%' => $expectedType,
+                        '%expected%' => implode(' or ', $expectedTypes),
                         '%actual%' => is_object($actual) ? get_class($actual) : gettype($actual),
                         '%function%' => $functionName,
                         '%file%' => $executionFile,

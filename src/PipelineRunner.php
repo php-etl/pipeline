@@ -6,9 +6,14 @@ use Kiboko\Contract\Bucket\AcceptanceResultBucketInterface;
 use Kiboko\Contract\Bucket\RejectionResultBucketInterface;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class PipelineRunner implements PipelineRunnerInterface
 {
+    public function __construct(private LoggerInterface $logger, private string $rejectionLevel = LogLevel::WARNING)
+    {}
+
     /**
      * @param \Iterator  $source
      * @param \Generator $coroutine
@@ -24,27 +29,46 @@ class PipelineRunner implements PipelineRunnerInterface
             while ($wrapper->valid($source)) {
                 $bucket = $coroutine->send($source->current());
 
+                if (!$bucket === null) {
+                    break;
+                }
+
                 if (!$bucket instanceof ResultBucketInterface) {
-                    throw UnexpectedYieldedValueType::expectingType(
+                    throw UnexpectedYieldedValueType::expectingTypes(
                         $coroutine,
-                        ResultBucketInterface::class,
+                        [ResultBucketInterface::class],
                         $bucket
                     );
                 }
 
                 if ($bucket instanceof RejectionResultBucketInterface) {
-                    // TODO: handle the rejection pipeline
+                    foreach ($bucket as $rejection) {
+                        $this->logger->log(
+                            $this->rejectionLevel,
+                            'Some data was rejected from the pipeline',
+                            [
+                                'line' => $rejection
+                            ]
+                        );
+                    }
                 }
 
-                if (!$bucket instanceof AcceptanceResultBucketInterface) {
-                    throw UnexpectedYieldedValueType::expectingType(
+                if (!$bucket instanceof AcceptanceResultBucketInterface
+                    && !$bucket instanceof RejectionResultBucketInterface
+                ) {
+                    throw UnexpectedYieldedValueType::expectingTypes(
                         $coroutine,
-                        AcceptanceResultBucketInterface::class,
+                        [
+                            AcceptanceResultBucketInterface::class,
+                            RejectionResultBucketInterface::class,
+                        ],
                         $bucket
                     );
                 }
 
-                yield from $bucket->walkAcceptance();
+                if ($bucket instanceof AcceptanceResultBucketInterface) {
+                    yield from $bucket->walkAcceptance();
+                }
 
                 $wrapper->next($source, $coroutine);
             }
