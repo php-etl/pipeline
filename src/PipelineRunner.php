@@ -8,11 +8,16 @@ use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 class PipelineRunner implements PipelineRunnerInterface
 {
-    public function __construct(private LoggerInterface $logger, private string $rejectionLevel = LogLevel::WARNING)
-    {}
+    private LoggerInterface $logger;
+
+    public function __construct(?LoggerInterface $logger, private string $rejectionLevel = LogLevel::WARNING)
+    {
+        $this->logger = $logger ?? new NullLogger();
+    }
 
     /**
      * @param \Iterator  $source
@@ -29,7 +34,7 @@ class PipelineRunner implements PipelineRunnerInterface
             while ($wrapper->valid($source)) {
                 $bucket = $coroutine->send($source->current());
 
-                if (!$bucket === null) {
+                if ($bucket === null) {
                     break;
                 }
 
