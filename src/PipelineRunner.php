@@ -27,7 +27,7 @@ class PipelineRunner implements PipelineRunnerInterface
      */
     public function run(\Iterator $source, \Generator $coroutine): \Iterator
     {
-        return new ResumableIterator(function(\Iterator $source) use($coroutine) {
+        return new ResumableIterator(function (\Iterator $source) use ($coroutine) {
             $wrapper = new GeneratorWrapper();
             $wrapper->rewind($source, $coroutine);
 

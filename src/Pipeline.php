@@ -58,7 +58,7 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
             $builder($handler->pipeline);
         }
 
-        $this->subject = $this->runner->run($this->subject, (function(array $handlers) {
+        $this->subject = $this->runner->run($this->subject, (function (array $handlers) {
             $line = yield;
 
             while (true) {
@@ -87,14 +87,14 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
         $extract = $extractor->extract();
         if (is_array($extract)) {
             $this->source->append(new \ArrayIterator($extract));
-        } else if ($extract instanceof \Traversable) {
+        } elseif ($extract instanceof \Traversable) {
             $this->source->append(new \IteratorIterator($extract));
         } else {
             throw new \RuntimeException('Invalid data source, expecting array or Traversable.');
         }
 
         if ($extractor instanceof FlushableInterface) {
-            $this->source->append((function(FlushableInterface $flushable) {
+            $this->source->append((function (FlushableInterface $flushable) {
                 yield from $flushable->flush();
             })($extractor));
         }
@@ -116,7 +116,7 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
                 $main = $this->runner->run($this->subject, $transformer->transform())
             );
 
-            $iterator->append((function(FlushableInterface $flushable) {
+            $iterator->append((function (FlushableInterface $flushable) {
                 yield from $flushable->flush();
             })($transformer));
         } else {
@@ -142,7 +142,7 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
                 $main = $this->runner->run($this->subject, $loader->load())
             );
 
-            $iterator->append((function(FlushableInterface $flushable) {
+            $iterator->append((function (FlushableInterface $flushable) {
                 yield from $flushable->flush();
             })($loader));
         } else {

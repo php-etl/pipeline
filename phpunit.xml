@@ -7,7 +7,6 @@
         backupGlobals="false"
         backupStaticAttributes="false"
         bootstrap="vendor/autoload.php"
-        cacheTokens="true"
         stopOnError="false"
         stopOnFailure="false"
         stopOnWarning="false"
@@ -49,6 +48,5 @@
                 </array>
             </arguments>
         </listener>
-        <listener class="MyBuilder\PhpunitAccelerator\TestListener"/>
     </listeners>
 </phpunit>

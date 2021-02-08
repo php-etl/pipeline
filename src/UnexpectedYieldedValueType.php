@@ -33,7 +33,8 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
             $executionFile = $re->getExecutingFile();
             $executionLine = $re->getExecutingLine();
 
-            return new self($coroutine,
+            return new self(
+                $coroutine,
                 strtr(
                     'Invalid yielded data, was expecting %expected%, got %actual%. Coroutine declared in %function%, running in %file%:%line%.',
                     [
@@ -48,7 +49,8 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                 $previous
             );
         } catch (\ReflectionException) {
-            return new self($coroutine,
+            return new self(
+                $coroutine,
                 strtr(
                     'Invalid yielded data, was expecting %expected%, got %actual%. Coroutine was declared in a terminated generator, could not fetch the declaration metadata.',
                     [
