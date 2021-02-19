@@ -36,6 +36,7 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
 
     public function fork(callable ...$builders): ForkingInterface
     {
+        error_log('The Pipeline::fork() method is not fully functional and has been deprecated for now. No replacement exists.', E_USER_DEPRECATED);
         $runner = $this->runner;
         $handlers = [];
         foreach ($builders as $builder) {
@@ -87,16 +88,12 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
         $extract = $extractor->extract();
         if (is_array($extract)) {
             $this->source->append(new \ArrayIterator($extract));
+        } elseif ($extract instanceof \Iterator) {
+            $this->source->append($extract);
         } elseif ($extract instanceof \Traversable) {
             $this->source->append(new \IteratorIterator($extract));
         } else {
             throw new \RuntimeException('Invalid data source, expecting array or Traversable.');
-        }
-
-        if ($extractor instanceof FlushableInterface) {
-            $this->source->append((function (FlushableInterface $flushable) {
-                yield from $flushable->flush();
-            })($extractor));
         }
 
         return $this;
@@ -113,12 +110,17 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
             $iterator = new \AppendIterator();
 
             $iterator->append(
-                $main = $this->runner->run($this->subject, $transformer->transform())
+                $this->runner->run($this->subject, $transformer->transform())
             );
-
-            $iterator->append((function (FlushableInterface $flushable) {
-                yield from $flushable->flush();
-            })($transformer));
+            $iterator->append(
+                $this->runner->run(
+                    new \ArrayIterator([null]),
+                    (function () use ($transformer): \Generator {
+                        yield;
+                        yield $transformer->flush();
+                    })()
+                )
+            );
         } else {
             $iterator = $this->runner->run($this->subject, $transformer->transform());
         }
@@ -139,12 +141,18 @@ class Pipeline implements PipelineInterface, ForkingInterface, WalkableInterface
             $iterator = new \AppendIterator();
 
             $iterator->append(
-                $main = $this->runner->run($this->subject, $loader->load())
+                $this->runner->run($this->subject, $loader->load())
             );
 
-            $iterator->append((function (FlushableInterface $flushable) {
-                yield from $flushable->flush();
-            })($loader));
+            $iterator->append(
+                $this->runner->run(
+                    new \ArrayIterator([null]),
+                    (function () use ($loader): \Generator {
+                        yield;
+                        yield $loader->flush();
+                    })()
+                )
+            );
         } else {
             $iterator = $this->runner->run($this->subject, $loader->load());
         }
