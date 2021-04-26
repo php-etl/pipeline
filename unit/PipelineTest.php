@@ -9,6 +9,8 @@ use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 use Kiboko\Contract\Pipeline\FlushableInterface;
 use Kiboko\Contract\Pipeline\LoaderInterface;
+use Kiboko\Contract\Pipeline\NullRejection;
+use Kiboko\Contract\Pipeline\NullState;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 final class PipelineTest extends IterableTestCase
@@ -20,11 +22,11 @@ final class PipelineTest extends IterableTestCase
         $pipeline->extract(new class implements ExtractorInterface {
             public function extract(): iterable
             {
-                yield 'lorem';
-                yield 'ipsum';
-                yield 'dolor';
+                yield new AcceptanceResultBucket('lorem');
+                yield new AcceptanceResultBucket('ipsum');
+                yield new AcceptanceResultBucket('dolor');
             }
-        });
+        }, new NullRejection(), new NullState());
 
         $this->assertIteration(
             new \ArrayIterator(['lorem', 'ipsum', 'dolor']),
@@ -46,7 +48,7 @@ final class PipelineTest extends IterableTestCase
                 $line = yield new AcceptanceResultBucket(str_rot13($line));
                 yield new AcceptanceResultBucket(str_rot13($line));
             }
-        });
+        }, new NullRejection(), new NullState());
 
         $this->assertIteration(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe']),
@@ -73,7 +75,7 @@ final class PipelineTest extends IterableTestCase
             {
                 return new AcceptanceResultBucket(str_rot13('sit amet'));
             }
-        });
+        }, new NullRejection(), new NullState());
 
         $this->assertIteration(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe', 'fvg nzrg']),
@@ -95,7 +97,7 @@ final class PipelineTest extends IterableTestCase
                 $line = yield new AcceptanceResultBucket(str_rot13($line));
                 yield new AcceptanceResultBucket(str_rot13($line));
             }
-        });
+        }, new NullRejection(), new NullState());
 
         $this->assertIteration(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe']),
@@ -122,7 +124,7 @@ final class PipelineTest extends IterableTestCase
             {
                 return new AcceptanceResultBucket(str_rot13('sit amet'));
             }
-        });
+        }, new NullRejection(), new NullState());
 
         $this->assertIteration(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe', 'fvg nzrg']),

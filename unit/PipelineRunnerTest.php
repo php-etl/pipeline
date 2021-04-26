@@ -5,6 +5,8 @@ namespace unit\Kiboko\Component\ETL\Pipeline;
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Component\Pipeline\PipelineRunner;
+use Kiboko\Contract\Pipeline\NullRejection;
+use Kiboko\Contract\Pipeline\NullState;
 use Psr\Log\NullLogger;
 
 class PipelineRunnerTest extends IterableTestCase
@@ -112,7 +114,7 @@ class PipelineRunnerTest extends IterableTestCase
     {
         $run = new PipelineRunner(new NullLogger());
 
-        $it = $run->run($source, $callback());
+        $it = $run->run($source, $callback(), new NullRejection(), new NullState());
 
         $this->assertIteration(new \ArrayIterator($expected), $it);
     }

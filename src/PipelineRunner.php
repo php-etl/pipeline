@@ -6,6 +6,8 @@ use Kiboko\Contract\Bucket\AcceptanceResultBucketInterface;
 use Kiboko\Contract\Bucket\RejectionResultBucketInterface;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
+use Kiboko\Contract\Pipeline\RejectionInterface;
+use Kiboko\Contract\Pipeline\StateInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
@@ -19,14 +21,14 @@ class PipelineRunner implements PipelineRunnerInterface
         $this->logger = $logger ?? new NullLogger();
     }
 
-    /**
-     * @param \Iterator  $source
-     * @param \Generator $coroutine
-     *
-     * @return \Iterator
-     */
-    public function run(\Iterator $source, \Generator $coroutine): \Iterator
-    {
+    public function run(
+        \Iterator $source,
+        \Generator $coroutine,
+        RejectionInterface $rejection,
+        StateInterface $state,
+    ): \Iterator {
+        $state->initialize();
+
         $wrapper = new GeneratorWrapper();
         $wrapper->rewind($source, $coroutine);
 
@@ -46,12 +48,15 @@ class PipelineRunner implements PipelineRunnerInterface
             }
 
             if ($bucket instanceof RejectionResultBucketInterface) {
-                foreach ($bucket as $rejection) {
+                foreach ($bucket->walkRejection() as $line) {
+                    $rejection->reject($line);
+                    $state->reject();
+
                     $this->logger->log(
                         $this->rejectionLevel,
                         'Some data was rejected from the pipeline',
                         [
-                            'line' => $rejection
+                            'line' => $line
                         ]
                     );
                 }
@@ -71,6 +76,7 @@ class PipelineRunner implements PipelineRunnerInterface
 
             if ($bucket instanceof AcceptanceResultBucketInterface) {
                 yield from $bucket->walkAcceptance();
+                $state->accept();
             }
 
             $wrapper->next($source);

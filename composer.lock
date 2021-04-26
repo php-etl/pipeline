@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37e7daa1d50a722fbaf3db5183748785",
+    "content-hash": "496787861db94c2b6b31e7ecc33c26ce",
     "packages": [
         {
             "name": "php-etl/bucket",
@@ -120,23 +120,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/pipeline-contracts.git",
-                "reference": "0d90272ad46add53de4933a31aee9f565c180e93"
+                "reference": "2b4cc50d54a1ea521647cf59e9e21a68c75cf112"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/0d90272ad46add53de4933a31aee9f565c180e93",
-                "reference": "0d90272ad46add53de4933a31aee9f565c180e93",
+                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/2b4cc50d54a1ea521647cf59e9e21a68c75cf112",
+                "reference": "2b4cc50d54a1ea521647cf59e9e21a68c75cf112",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.0",
-                "php-etl/bucket-contracts": "^0.1"
+                "php-etl/bucket-contracts": "^0.1.0"
             },
             "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.1.x-dev"
+                    "dev-master": "0.2.x-dev"
                 }
             },
             "autoload": {
@@ -163,7 +163,7 @@
                 "issues": "https://github.com/php-etl/pipeline-contracts/issues",
                 "source": "https://github.com/php-etl/pipeline-contracts/tree/master"
             },
-            "time": "2021-02-01T13:55:21+00:00"
+            "time": "2021-04-26T21:32:14+00:00"
         },
         {
             "name": "psr/log",
