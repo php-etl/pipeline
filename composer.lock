@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "496787861db94c2b6b31e7ecc33c26ce",
+    "content-hash": "d2a79793a77cda316c65103387cb40df",
     "packages": [
         {
             "name": "php-etl/bucket",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket.git",
-                "reference": "cea9c55594bf1cd9b328067033ea710ce26996a5"
+                "reference": "7e5801e285f88ddd4b1ceb5f2b22e1b5457fe7b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket/zipball/cea9c55594bf1cd9b328067033ea710ce26996a5",
-                "reference": "cea9c55594bf1cd9b328067033ea710ce26996a5",
+                "url": "https://api.github.com/repos/php-etl/bucket/zipball/7e5801e285f88ddd4b1ceb5f2b22e1b5457fe7b1",
+                "reference": "7e5801e285f88ddd4b1ceb5f2b22e1b5457fe7b1",
                 "shasum": ""
             },
             "require": {
@@ -32,7 +32,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.1.x-dev"
+                    "dev-master": "0.2.x-dev"
                 }
             },
             "autoload": {
@@ -59,7 +59,7 @@
                 "issues": "https://github.com/php-etl/bucket/issues",
                 "source": "https://github.com/php-etl/bucket/tree/master"
             },
-            "time": "2021-01-19T15:19:53+00:00"
+            "time": "2021-05-21T06:43:10+00:00"
         },
         {
             "name": "php-etl/bucket-contracts",
