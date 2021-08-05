@@ -54,7 +54,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                 strtr(
                     'Invalid yielded data, was expecting %expected%, got %actual%. Coroutine was declared in a terminated generator, could not fetch the declaration metadata.',
                     [
-                        '%expected%' => $expectedType,
+                        '%expected%' => implode(' or ', $expectedTypes),
                         '%actual%' => is_object($actual) ? get_class($actual) : gettype($actual),
                     ]
                 ),
