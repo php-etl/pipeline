@@ -6,6 +6,6 @@ final class JSONStreamLoader extends StreamLoader
 {
     protected function formatLine($line)
     {
-        return \json_encode($line);
+        return \json_encode($line) . PHP_EOL;
     }
 }
