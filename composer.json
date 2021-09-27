@@ -14,11 +14,12 @@
         }
     ],
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": "^8.0",
         "psr/log": "^1.1@dev",
         "php-etl/bucket": "^0.2.0",
-        "php-etl/pipeline-contracts": "^0.2.0",
+        "php-etl/pipeline-contracts": "^0.3.0",
         "php-etl/bucket-contracts": "^0.1.0"
     },
     "require-dev": {
@@ -45,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.3.x-dev"
+            "dev-master": "0.4.x-dev"
         }
     }
 }
