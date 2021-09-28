@@ -15,9 +15,9 @@ jobs:
         with:
           args: --prefer-dist
           php_version: 8.0
-
       - name: PHPStan
         uses: php-actions/phpstan@v2
         with:
           path: src/
-          args: --level=5
+          level: 5
+          php_version: 8.0

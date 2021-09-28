@@ -28,6 +28,7 @@ class PipelineRunner implements PipelineRunnerInterface
         StateInterface $state,
     ): \Iterator {
         $state->initialize();
+        $rejection->initialize();
 
         $wrapper = new GeneratorWrapper();
         $wrapper->rewind($source, $coroutine);

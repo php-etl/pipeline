@@ -3,16 +3,19 @@
 namespace Kiboko\Component\Pipeline\Loader;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
+use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Pipeline\LoaderInterface;
 
+/**
+ * @template Type
+ * @template-implements LoaderInterface<Type>
+ */
 abstract class StreamLoader implements LoaderInterface
 {
     /** @var resource */
     private $stream;
 
-    /**
-     * @param resource $stream
-     */
+    /** @param resource $stream */
     public function __construct($stream)
     {
         if (!is_resource($stream) || get_resource_type($stream) !== 'stream') {
@@ -24,12 +27,14 @@ abstract class StreamLoader implements LoaderInterface
         $this->stream = $stream;
     }
 
+    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, null|Type, void> */
     public function load(): \Generator
     {
-        $line = yield;
-        do {
+        $line = yield new EmptyResultBucket();
+        while (true) {
             fwrite($this->stream, $this->formatLine($line));
-        } while ($line = yield new AcceptanceResultBucket($line));
+            $line = yield new AcceptanceResultBucket($line);
+        }
     }
 
     abstract protected function formatLine($line);

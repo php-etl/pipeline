@@ -131,7 +131,8 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
 
             $iterator->append(
                 $this->runner->run(
-                    $this->subject, $loader->load(),
+                    $this->subject,
+                    $loader->load(),
                     $rejection,
                     $state,
                 )
