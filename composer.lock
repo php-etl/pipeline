@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket.git",
-                "reference": "457df5ed4ad034e56adf29e4bb225f4fb5cb79c3"
+                "reference": "71da9b48cc227575b66266491fce2b13112f4144"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket/zipball/457df5ed4ad034e56adf29e4bb225f4fb5cb79c3",
-                "reference": "457df5ed4ad034e56adf29e4bb225f4fb5cb79c3",
+                "url": "https://api.github.com/repos/php-etl/bucket/zipball/71da9b48cc227575b66266491fce2b13112f4144",
+                "reference": "71da9b48cc227575b66266491fce2b13112f4144",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +26,11 @@
             },
             "require-dev": {
                 "friends-of-phpspec/phpspec-code-coverage": "6.x-dev",
-                "phpspec/phpspec": "^7.0"
+                "johnkary/phpunit-speedtrap": "*",
+                "mybuilder/phpunit-accelerator": "*",
+                "phpspec/phpspec": "^7.0",
+                "phpunit/php-invoker": "*",
+                "phpunit/phpunit": "^9.0"
             },
             "default-branch": true,
             "type": "library",
@@ -59,7 +63,7 @@
                 "issues": "https://github.com/php-etl/bucket/issues",
                 "source": "https://github.com/php-etl/bucket/tree/master"
             },
-            "time": "2021-06-28T22:06:57+00:00"
+            "time": "2021-09-27T19:07:27+00:00"
         },
         {
             "name": "php-etl/bucket-contracts",
@@ -115,16 +119,16 @@
         },
         {
             "name": "php-etl/pipeline-contracts",
-            "version": "v0.3.1",
+            "version": "v0.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/pipeline-contracts.git",
-                "reference": "4d3f91066c7578797811a45883427f6366f9aefb"
+                "reference": "c89002bcc303194bbc9cf3efbff6da62c519ea70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/4d3f91066c7578797811a45883427f6366f9aefb",
-                "reference": "4d3f91066c7578797811a45883427f6366f9aefb",
+                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/c89002bcc303194bbc9cf3efbff6da62c519ea70",
+                "reference": "c89002bcc303194bbc9cf3efbff6da62c519ea70",
                 "shasum": ""
             },
             "require": {
@@ -159,9 +163,9 @@
             "description": "This library describes contracts for the Extract-Transform-Load pattern.",
             "support": {
                 "issues": "https://github.com/php-etl/pipeline-contracts/issues",
-                "source": "https://github.com/php-etl/pipeline-contracts/tree/v0.3.1"
+                "source": "https://github.com/php-etl/pipeline-contracts/tree/v0.3.3"
             },
-            "time": "2021-09-27T15:55:46+00:00"
+            "time": "2021-09-28T06:57:28+00:00"
         },
         {
             "name": "psr/log",
