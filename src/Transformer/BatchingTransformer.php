@@ -2,7 +2,7 @@
 
 namespace Kiboko\Component\Pipeline\Transformer;
 
-use Kiboko\Component\Bucket\AcceptanceAppendableResultBucket;
+use Kiboko\Component\Bucket\AppendableIteratorAcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\FlushableInterface;
@@ -18,10 +18,10 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
         $this->bucket = new EmptyResultBucket();
     }
 
-    /** @return \Generator<mixed, AcceptanceAppendableResultBucket<Type>|EmptyResultBucket, null|Type, void> */
+    /** @return \Generator<mixed, AppendableIteratorAcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
     public function transform(): \Generator
     {
-        $this->bucket = new AcceptanceAppendableResultBucket();
+        $this->bucket = new AppendableIteratorAcceptanceResultBucket();
         $itemCount = 0;
 
         $line = yield new EmptyResultBucket();
@@ -31,7 +31,7 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
             if ($this->batchSize <= ++$itemCount) {
                 $line = yield $this->bucket;
                 $itemCount = 0;
-                $this->bucket = new AcceptanceAppendableResultBucket();
+                $this->bucket = new AppendableIteratorAcceptanceResultBucket();
             } else {
                 $line = yield new EmptyResultBucket();
             }
