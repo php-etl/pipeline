@@ -19,5 +19,5 @@ jobs:
         uses: php-actions/phpstan@v2
         with:
           path: src/
-          level: 4
+          level: 5
           php_version: 8.0
