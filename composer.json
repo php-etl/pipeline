@@ -38,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "unit\\Kiboko\\Component\\ETL\\Pipeline\\": "unit/"
+            "unit\\Kiboko\\Component\\ETL\\Pipeline\\": "tests/unit/"
         }
     },
     "config": {
