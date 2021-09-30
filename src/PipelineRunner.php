@@ -82,5 +82,8 @@ class PipelineRunner implements PipelineRunnerInterface
 
             $wrapper->next($source);
         }
+
+        $state->teardown();
+        $rejection->teardown();
     }
 }
