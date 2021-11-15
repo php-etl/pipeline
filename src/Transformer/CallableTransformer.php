@@ -19,11 +19,11 @@ class CallableTransformer implements TransformerInterface
         $this->callback = $callback;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
-    public function transform(): \Generator
+    public function transform(): \Fiber
     {
-        $line = yield new EmptyResultBucket();
-        do {
-        } while ($line = yield new AcceptanceResultBucket(($this->callback)($line)));
+        return new \Fiber(function () {
+            $line = \Fiber::suspend(new EmptyResultBucket());
+            do {} while ($line = \Fiber::suspend(new AcceptanceResultBucket(($this->callback)($line))));
+        });
     }
 }

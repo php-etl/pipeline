@@ -27,13 +27,12 @@ abstract class StreamLoader implements LoaderInterface
         $this->stream = $stream;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, null|Type, void> */
-    public function load(): \Generator
+    public function load(): void
     {
-        $line = yield new EmptyResultBucket();
+        $line = \Fiber::suspend(new EmptyResultBucket());
         while (true) {
             fwrite($this->stream, $this->formatLine($line));
-            $line = yield new AcceptanceResultBucket($line);
+            $line = \Fiber::suspend(new AcceptanceResultBucket($line));
         }
     }
 

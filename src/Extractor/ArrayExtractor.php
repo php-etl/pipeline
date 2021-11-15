@@ -2,6 +2,7 @@
 
 namespace Kiboko\Component\Pipeline\Extractor;
 
+use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 
 class ArrayExtractor implements ExtractorInterface
@@ -19,11 +20,10 @@ class ArrayExtractor implements ExtractorInterface
         $this->data = $data;
     }
 
-    /**
-     * @return \Generator
-     */
-    public function extract(): iterable
+    public function extract(): void
     {
-        yield from $this->data;
+        foreach ($this->data as $line) {
+            \Fiber::suspend(new AcceptanceResultBucket($line));
+        }
     }
 }

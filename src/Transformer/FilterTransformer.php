@@ -20,19 +20,18 @@ class FilterTransformer implements TransformerInterface
         $this->callback = $callback;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
-    public function transform(): \Generator
+    public function transform(): \Fiber
     {
         $callback = $this->callback;
 
-        $line = yield new EmptyResultBucket();
+        $line = \Fiber::suspend(new EmptyResultBucket());
         while (true) {
             if ($line === null || !$callback($line)) {
-                $line = yield new EmptyResultBucket();
+                $line = \Fiber::suspend(new EmptyResultBucket());
                 continue;
             }
 
-            $line = yield new AcceptanceResultBucket($line);
+            $line = \Fiber::suspend(new AcceptanceResultBucket($line));
         }
     }
 }

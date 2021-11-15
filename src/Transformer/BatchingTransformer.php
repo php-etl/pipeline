@@ -18,22 +18,21 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
         $this->bucket = new EmptyResultBucket();
     }
 
-    /** @return \Generator<mixed, AppendableIteratorAcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
-    public function transform(): \Generator
+    public function transform(): \Fiber
     {
         $this->bucket = new AppendableIteratorAcceptanceResultBucket();
         $itemCount = 0;
 
-        $line = yield new EmptyResultBucket();
+        $line = \Fiber::suspend(new EmptyResultBucket());
         while (true) {
             $this->bucket->append($line);
 
             if ($this->batchSize <= ++$itemCount) {
-                $line = yield $this->bucket;
+                $line = \Fiber::suspend($this->bucket);
                 $itemCount = 0;
                 $this->bucket = new AppendableIteratorAcceptanceResultBucket();
             } else {
-                $line = yield new EmptyResultBucket();
+                $line = \Fiber::suspend(new EmptyResultBucket());
             }
         }
     }

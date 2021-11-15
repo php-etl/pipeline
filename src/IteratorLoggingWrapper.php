@@ -4,7 +4,7 @@ namespace Kiboko\Component\Pipeline;
 
 use Psr\Log\LoggerInterface;
 
-class IteratorLoggingWrapper implements \Iterator
+final class IteratorLoggingWrapper implements \Iterator
 {
     /**
      * @var \Iterator

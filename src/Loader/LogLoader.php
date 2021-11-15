@@ -25,12 +25,11 @@ final class LogLoader implements LoaderInterface
         $this->logLevel = $logLevel;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, null|Type, void> */
-    public function load(): \Generator
+    public function load(): void
     {
-        $line = yield new EmptyResultBucket();
+        $line = \Fiber::suspend(new EmptyResultBucket());
         do {
             $this->logger->log($this->logLevel, var_export($line, true));
-        } while ($line = yield new AcceptanceResultBucket($line));
+        } while ($line = \Fiber::suspend(new AcceptanceResultBucket($line)));
     }
 }

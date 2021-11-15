@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline;
 
@@ -12,7 +12,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
-class PipelineRunner implements PipelineRunnerInterface
+final class PipelineRunner implements PipelineRunnerInterface
 {
     private LoggerInterface $logger;
 
@@ -23,18 +23,22 @@ class PipelineRunner implements PipelineRunnerInterface
 
     public function run(
         \Iterator $source,
-        \Generator $coroutine,
+        \Generator|\Fiber $async,
         RejectionInterface $rejection,
         StateInterface $state,
     ): \Iterator {
         $state->initialize();
         $rejection->initialize();
 
-        $wrapper = new GeneratorWrapper();
-        $wrapper->rewind($source, $coroutine);
+        if ($async instanceof \Generator) {
+            $wrapper = new GeneratorWrapper($async);
+        } else if ($async instanceof \Fiber) {
+            $wrapper = new FiberWrapper($async);
+        }
 
+        $wrapper->rewind($source);
         while ($wrapper->valid($source)) {
-            $bucket = $coroutine->send($source->current());
+            $bucket = $wrapper->send($source->current());
 
             if ($bucket === null) {
                 break;
@@ -42,7 +46,7 @@ class PipelineRunner implements PipelineRunnerInterface
 
             if (!$bucket instanceof ResultBucketInterface) {
                 throw UnexpectedYieldedValueType::expectingTypes(
-                    $coroutine,
+                    $async,
                     [ResultBucketInterface::class],
                     $bucket
                 );
@@ -65,7 +69,7 @@ class PipelineRunner implements PipelineRunnerInterface
 
             if (!$bucket instanceof ResultBucketInterface) {
                 throw UnexpectedYieldedValueType::expectingTypes(
-                    $coroutine,
+                    $async,
                     [
                         ResultBucketInterface::class,
                         AcceptanceResultBucketInterface::class,

@@ -16,7 +16,7 @@ use Kiboko\Contract\Pipeline\TransformerInterface;
 use Kiboko\Contract\Pipeline\TransformingInterface;
 use Kiboko\Contract\Pipeline\WalkableInterface;
 
-class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
+final class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
     private \AppendIterator $source;
     private iterable $subject;
@@ -29,7 +29,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         $this->subject = new \NoRewindIterator($this->source);
     }
 
-    public function feed(...$data): void
+    public function feed(array|object ...$data): void
     {
         $this->source->append(new \ArrayIterator($data));
     }
@@ -45,37 +45,16 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         RejectionInterface $rejection,
         StateInterface $state,
     ): ExtractingInterface {
-        $extract = $extractor->extract();
-        if (is_array($extract)) {
-            $this->source->append(
-                $this->runner->run(
-                    new \ArrayIterator($extract),
-                    $this->passThroughCoroutine(),
-                    $rejection,
-                    $state
-                )
-            );
-        } elseif ($extract instanceof \Iterator) {
-            $this->source->append(
-                $this->runner->run(
-                    $extract,
-                    $this->passThroughCoroutine(),
-                    $rejection,
-                    $state
-                )
-            );
-        } elseif ($extract instanceof \Traversable) {
-            $this->source->append(
-                $this->runner->run(
-                    new \IteratorIterator($extract),
-                    $this->passThroughCoroutine(),
-                    $rejection,
-                    $state
-                )
-            );
-        } else {
-            throw new \RuntimeException('Invalid data source, expecting array or Traversable.');
-        }
+        $this->source->append(
+            $this->runner->run(
+                new \InfiniteIterator(new \ArrayIterator([null])),
+                new \Fiber(function() use($extractor) {
+                    $extractor->extract();
+                }),
+                $rejection,
+                $state,
+            )
+        );
 
         return $this;
     }
@@ -91,18 +70,19 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             $iterator->append(
                 $this->runner->run(
                     $this->subject,
-                    $transformer->transform(),
+                    new \Fiber(\Closure::fromCallable([$transformer, 'transform'])),
                     $rejection,
                     $state,
                 )
             );
+
             $iterator->append(
                 $this->runner->run(
-                    new \ArrayIterator([null]),
-                    (function () use ($transformer): \Generator {
-                        yield;
-                        yield $transformer->flush();
-                    })(),
+                    new \InfiniteIterator(new \ArrayIterator([null])),
+                    new \Fiber(function() use ($transformer) {
+                        \Fiber::suspend(null);
+                        \Fiber::suspend($transformer->flush());
+                    }),
                     $rejection,
                     $state,
                 )
@@ -110,7 +90,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         } else {
             $iterator = $this->runner->run(
                 $this->subject,
-                $transformer->transform(),
+                new \Fiber(\Closure::fromCallable([$transformer, 'transform'])),
                 $rejection,
                 $state,
             );
@@ -132,7 +112,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             $iterator->append(
                 $this->runner->run(
                     $this->subject,
-                    $loader->load(),
+                    new \Fiber(\Closure::fromCallable([$loader, 'load'])),
                     $rejection,
                     $state,
                 )
@@ -140,11 +120,11 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
 
             $iterator->append(
                 $this->runner->run(
-                    new \ArrayIterator([null]),
-                    (function () use ($loader): \Generator {
-                        yield;
-                        yield $loader->flush();
-                    })(),
+                    new \InfiniteIterator(new \ArrayIterator([null])),
+                    new \Fiber(function() use ($loader) {
+                        \Fiber::suspend(null);
+                        \Fiber::suspend($loader->flush());
+                    }),
                     $rejection,
                     $state,
                 )
@@ -152,7 +132,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         } else {
             $iterator = $this->runner->run(
                 $this->subject,
-                $loader->load(),
+                new \Fiber(\Closure::fromCallable([$loader, 'load'])),
                 $rejection,
                 $state,
             );

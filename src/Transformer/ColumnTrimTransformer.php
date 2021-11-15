@@ -18,13 +18,12 @@ class ColumnTrimTransformer implements TransformerInterface
     ) {
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
-    public function transform(): \Generator
+    public function transform(): \FIber
     {
-        $line = yield new EmptyResultBucket();
+        $line = \Fiber::suspend(new EmptyResultBucket());
         while (true) {
             if ($line === null) {
-                $line = yield new EmptyResultBucket();
+                $line = \Fiber::suspend(new EmptyResultBucket());
                 continue;
             }
             foreach ($this->columnsToTrim as $column) {
@@ -34,7 +33,7 @@ class ColumnTrimTransformer implements TransformerInterface
 
                 $line[$column] = trim($line[$column]);
             }
-            $line = yield new AcceptanceResultBucket($line);
+            $line = \Fiber::suspend(new AcceptanceResultBucket($line));
         }
     }
 }
