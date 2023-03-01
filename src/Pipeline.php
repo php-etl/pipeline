@@ -54,7 +54,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         $extract = $extractor->extract();
         if (is_array($extract)) {
             $this->source->append(
-                $this->runner->run(
+                $this->offsetRun(
                     new \ArrayIterator($extract),
                     $this->passThroughCoroutine(),
                     $rejection,
@@ -63,7 +63,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             );
         } elseif ($extract instanceof \Iterator) {
             $this->source->append(
-                $this->runner->run(
+                $this->offsetRun(
                     $extract,
                     $this->passThroughCoroutine(),
                     $rejection,
@@ -72,7 +72,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             );
         } elseif ($extract instanceof \Traversable) {
             $this->source->append(
-                $this->runner->run(
+                $this->offsetRun(
                     new \IteratorIterator($extract),
                     $this->passThroughCoroutine(),
                     $rejection,
@@ -95,7 +95,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             $iterator = new \AppendIterator();
 
             $iterator->append(
-                $this->runner->run(
+                $this->offsetRun(
                     $this->subject,
                     $transformer->transform(),
                     $rejection,
@@ -103,15 +103,17 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                 )
             );
             $iterator->append(
-                $this->runner->run(
-                    new \ArrayIterator([null]),
+                $this->offsetRun(
+                    new PaddedIterator(new \EmptyIterator()),
                     $this->flushingCoroutine($transformer),
                     $rejection,
                     $state,
                 )
             );
+
+            $iterator = new \NoRewindIterator($iterator);
         } else {
-            $iterator = $this->runner->run(
+            $iterator = $this->offsetRun(
                 $this->subject,
                 $transformer->transform(),
                 $rejection,
@@ -119,7 +121,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             );
         }
 
-        $this->subject = new \NoRewindIterator($iterator);
+        $this->subject = $iterator;
 
         return $this;
     }
@@ -133,7 +135,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             $iterator = new \AppendIterator();
 
             $iterator->append(
-                $this->runner->run(
+                $this->offsetRun(
                     $this->subject,
                     $loader->load(),
                     $rejection,
@@ -142,15 +144,17 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             );
 
             $iterator->append(
-                $this->runner->run(
-                    new \ArrayIterator([null]),
+                $this->offsetRun(
+                    new PaddedIterator(new \EmptyIterator()),
                     $this->flushingCoroutine($loader),
                     $rejection,
                     $state,
                 )
             );
+
+            $iterator = new \NoRewindIterator($iterator);
         } else {
-            $iterator = $this->runner->run(
+            $iterator = $this->offsetRun(
                 $this->subject,
                 $loader->load(),
                 $rejection,
@@ -158,9 +162,19 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             );
         }
 
-        $this->subject = new \NoRewindIterator($iterator);
+        $this->subject = $iterator;
 
         return $this;
+    }
+
+    private function offsetRun(
+        \Iterator $source,
+        \Generator $async,
+        RejectionInterface $rejection,
+        StateInterface $state,
+        int $offset = 1
+    ): \Iterator {
+        return new SkippedIterator(new \NoRewindIterator($this->runner->run($source, $async, $rejection, $state)), $offset);
     }
 
     public function walk(): \Iterator

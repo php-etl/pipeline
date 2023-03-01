@@ -27,15 +27,6 @@ class PipelineRunner implements PipelineRunnerInterface
         RejectionInterface $rejection,
         StateInterface $state,
     ): \Iterator {
-        return new \LimitIterator($this->coroutine($source, $coroutine, $rejection, $state), 1);
-    }
-
-    private function coroutine(
-        \Iterator $source,
-        \Generator $coroutine,
-        RejectionInterface $rejection,
-        StateInterface $state,
-    ): \Generator {
         $state->initialize();
         $rejection->initialize();
 

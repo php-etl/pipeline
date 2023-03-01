@@ -27,7 +27,7 @@
         "johnkary/phpunit-speedtrap": "*",
         "mybuilder/phpunit-accelerator": "*",
         "phpunit/php-invoker": "*",
-        "php-etl/phpunit-extension": "0.4.x-dev"
+        "php-etl/phpunit-extension": "*"
     },
     "provide": {
         "php-etl/pipeline-implementation": "0.3.0"

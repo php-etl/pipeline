@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32535f6ecbc8e5aadd54be5f1f55d54f",
+    "content-hash": "499b9fcbb3bcca8a71c748dca36969c5",
     "packages": [
         {
             "name": "php-etl/bucket",
@@ -3645,9 +3645,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "php-etl/phpunit-extension": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

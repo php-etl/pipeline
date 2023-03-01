@@ -6,13 +6,8 @@ use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\PHPUnitExtension\Assert\PipelineAssertTrait;
 use Kiboko\Component\Pipeline\Pipeline;
 use Kiboko\Component\Pipeline\PipelineRunner;
-use Kiboko\Contract\Bucket\ResultBucketInterface;
-use Kiboko\Contract\Pipeline\ExtractorInterface;
-use Kiboko\Contract\Pipeline\FlushableInterface;
-use Kiboko\Contract\Pipeline\LoaderInterface;
 use Kiboko\Contract\Pipeline\NullRejection;
 use Kiboko\Contract\Pipeline\NullState;
-use Kiboko\Contract\Pipeline\TransformerInterface;
 use PHPUnit\Framework\TestCase;
 
 final class PipelineTest extends TestCase
@@ -21,17 +16,9 @@ final class PipelineTest extends TestCase
 
     public function testExtractorWithoutFlush()
     {
-        $this->markTestSkipped();
         $pipeline = new Pipeline(new PipelineRunner(null));
 
-        $pipeline->extract(new class implements ExtractorInterface {
-            public function extract(): iterable
-            {
-                yield new AcceptanceResultBucket('lorem');
-                yield new AcceptanceResultBucket('ipsum');
-                yield new AcceptanceResultBucket('dolor');
-            }
-        }, new NullRejection(), new NullState());
+        $pipeline->extract(new DummyExtractor(), new NullRejection(), new NullState());
 
         $this->assertDoesIterateExactly(
             new \ArrayIterator(['lorem', 'ipsum', 'dolor']),
@@ -43,17 +30,10 @@ final class PipelineTest extends TestCase
     {
         $pipeline = new Pipeline(new PipelineRunner(null));
 
-//        $pipeline->feed( 'lorem', 'ipsum', 'dolor');
+        $pipeline->feed('lorem', 'ipsum', 'dolor');
+//        $pipeline->feed([new AcceptanceResultBucket('lorem', 'ipsum', 'dolor')], new NullRejection(), new NullState());
 
-        $pipeline->transform(new class implements TransformerInterface {
-            public function transform(): \Generator
-            {
-                $line = yield;
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                yield new AcceptanceResultBucket(str_rot13($line));
-            }
-        }, new NullRejection(), new NullState());
+        $pipeline->transform(new DummyRot13Transformer(), new NullRejection(), new NullState());
 
         $this->assertDoesIterateExactly(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe']),
@@ -63,25 +43,12 @@ final class PipelineTest extends TestCase
 
     public function testTransformerWithFlush()
     {
-        $this->markTestSkipped();
         $pipeline = new Pipeline(new PipelineRunner(null));
 
         $pipeline->feed('lorem', 'ipsum', 'dolor');
+//        $pipeline->feed([new AcceptanceResultBucket('lorem', 'ipsum', 'dolor')], new NullRejection(), new NullState());
 
-        $pipeline->transform(new class implements TransformerInterface, FlushableInterface {
-            public function transform(): \Generator
-            {
-                $line = yield;
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                yield new AcceptanceResultBucket(str_rot13($line));
-            }
-
-            public function flush(): ResultBucketInterface
-            {
-                return new AcceptanceResultBucket(str_rot13('sit amet'));
-            }
-        }, new NullRejection(), new NullState());
+        $pipeline->transform(new DummyRot13FlushableTransformer(), new NullRejection(), new NullState());
 
         $this->assertDoesIterateExactly(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe', 'fvg nzrg']),
@@ -91,20 +58,12 @@ final class PipelineTest extends TestCase
 
     public function testLoaderWithoutFlush()
     {
-        $this->markTestSkipped();
         $pipeline = new Pipeline(new PipelineRunner(null));
 
         $pipeline->feed('lorem', 'ipsum', 'dolor');
+//        $pipeline->feed([new AcceptanceResultBucket('lorem', 'ipsum', 'dolor')], new NullRejection(), new NullState());
 
-        $pipeline->load(new class implements LoaderInterface {
-            public function load(): \Generator
-            {
-                $line = yield;
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                yield new AcceptanceResultBucket(str_rot13($line));
-            }
-        }, new NullRejection(), new NullState());
+        $pipeline->load(new DummyRot13Loader(), new NullRejection(), new NullState());
 
         $this->assertDoesIterateExactly(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe']),
@@ -114,25 +73,12 @@ final class PipelineTest extends TestCase
 
     public function testLoaderWithFlush()
     {
-        $this->markTestSkipped();
         $pipeline = new Pipeline(new PipelineRunner(null));
 
         $pipeline->feed('lorem', 'ipsum', 'dolor');
+//        $pipeline->feed([new AcceptanceResultBucket('lorem', 'ipsum', 'dolor')], new NullRejection(), new NullState());
 
-        $pipeline->load(new class implements LoaderInterface, FlushableInterface {
-            public function load(): \Generator
-            {
-                $line = yield;
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                $line = yield new AcceptanceResultBucket(str_rot13($line));
-                yield new AcceptanceResultBucket(str_rot13($line));
-            }
-
-            public function flush(): ResultBucketInterface
-            {
-                return new AcceptanceResultBucket(str_rot13('sit amet'));
-            }
-        }, new NullRejection(), new NullState());
+        $pipeline->load(new DummyRot13FlushableLoader(), new NullRejection(), new NullState());
 
         $this->assertDoesIterateExactly(
             new \ArrayIterator(['yberz', 'vcfhz', 'qbybe', 'fvg nzrg']),
