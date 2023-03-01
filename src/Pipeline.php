@@ -40,6 +40,12 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         while ($line = yield $line);
     }
 
+    private function flushingCoroutine(FlushableInterface $flushable): \Generator
+    {
+        yield;
+        yield $flushable->flush();
+    }
+
     public function extract(
         ExtractorInterface $extractor,
         RejectionInterface $rejection,
@@ -99,10 +105,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             $iterator->append(
                 $this->runner->run(
                     new \ArrayIterator([null]),
-                    (function () use ($transformer): \Generator {
-                        yield;
-                        yield $transformer->flush();
-                    })(),
+                    $this->flushingCoroutine($transformer),
                     $rejection,
                     $state,
                 )
@@ -141,10 +144,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
             $iterator->append(
                 $this->runner->run(
                     new \ArrayIterator([null]),
-                    (function () use ($loader): \Generator {
-                        yield;
-                        yield $loader->flush();
-                    })(),
+                    $this->flushingCoroutine($loader),
                     $rejection,
                     $state,
                 )
