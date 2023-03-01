@@ -26,7 +26,8 @@
         "phpunit/phpunit": "^9.0",
         "johnkary/phpunit-speedtrap": "*",
         "mybuilder/phpunit-accelerator": "*",
-        "phpunit/php-invoker": "*"
+        "phpunit/php-invoker": "*",
+        "php-etl/phpunit-extension": "0.4.x-dev"
     },
     "provide": {
         "php-etl/pipeline-implementation": "0.3.0"
@@ -42,7 +43,10 @@
         }
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "extra": {
         "branch-alias": {
