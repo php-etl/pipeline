@@ -1,22 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Extractor;
 
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 
 class IteratorExtractor implements ExtractorInterface
 {
-    /**
-     * @var \Traversable
-     */
-    private $traversable;
-
-    /**
-     * @param \Traversable $traversable
-     */
-    public function __construct(\Traversable $traversable)
+    public function __construct(private readonly \Traversable $traversable)
     {
-        $this->traversable = $traversable;
     }
 
     /**

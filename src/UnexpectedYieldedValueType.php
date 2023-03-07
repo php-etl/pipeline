@@ -1,20 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline;
 
 final class UnexpectedYieldedValueType extends \UnexpectedValueException
 {
-    /**
-     * @var \Generator
-     */
-    private $coroutine;
-
-    /**
-     * @param \Generator $coroutine
-     */
-    public function __construct(\Generator $coroutine, string $message = null, int $code = null, ?\Exception $previous = null)
+    public function __construct(private readonly \Generator $coroutine, string $message = null, int $code = null, ?\Exception $previous = null)
     {
-        $this->coroutine = $coroutine;
         parent::__construct($message, $code, $previous);
     }
 
@@ -28,7 +21,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
 
             if ($function instanceof \ReflectionMethod) {
                 $class = $function->getDeclaringClass();
-                $functionName = $class->getName() . '::' . $functionName;
+                $functionName = $class->getName().'::'.$functionName;
             }
             $executionFile = $re->getExecutingFile();
             $executionLine = $re->getExecutingLine();
@@ -39,7 +32,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                     'Invalid yielded data, was expecting %expected%, got %actual%. Coroutine declared in %function%, running in %file%:%line%.',
                     [
                         '%expected%' => implode(' or ', $expectedTypes),
-                        '%actual%' => is_object($actual) ? get_class($actual) : gettype($actual),
+                        '%actual%' => get_debug_type($actual),
                         '%function%' => $functionName,
                         '%file%' => $executionFile,
                         '%line%' => $executionLine,
@@ -55,7 +48,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                     'Invalid yielded data, was expecting %expected%, got %actual%. Coroutine was declared in a terminated generator, could not fetch the declaration metadata.',
                     [
                         '%expected%' => implode(' or ', $expectedTypes),
-                        '%actual%' => is_object($actual) ? get_class($actual) : gettype($actual),
+                        '%actual%' => get_debug_type($actual),
                     ]
                 ),
                 $code,

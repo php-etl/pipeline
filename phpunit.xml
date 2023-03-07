@@ -3,50 +3,32 @@
 <!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/5.7/phpunit.xsd"
-        backupGlobals="false"
-        backupStaticAttributes="false"
-        bootstrap="vendor/autoload.php"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+        backupGlobals="true"
+        colors="false"
+        processIsolation="false"
         stopOnError="false"
         stopOnFailure="false"
-        stopOnWarning="false"
         stopOnIncomplete="false"
-        stopOnRisky="false"
         stopOnSkipped="false"
-        failOnRisky="false"
-        failOnWarning="true"
-        beStrictAboutChangesToGlobalState="false"
-        beStrictAboutOutputDuringTests="false"
-        beStrictAboutResourceUsageDuringSmallTests="false"
-        beStrictAboutTestsThatDoNotTestAnything="false"
-        beStrictAboutTodoAnnotatedTests="false"
-        beStrictAboutCoversAnnotation="false"
-        enforceTimeLimit="false"
-        verbose="false">
-
-    <groups>
-        <exclude>
-            <group>vendor</group>
-        </exclude>
-    </groups>
+        stopOnRisky="false"
+        timeoutForSmallTests="1"
+        timeoutForMediumTests="10"
+        timeoutForLargeTests="60"
+        cacheDirectory=".phpunit.cache"
+        backupStaticProperties="false"
+        requireCoverageMetadata="false">
     <testsuites>
         <testsuite name="unit">
-            <directory>unit</directory>
+            <directory>tests/unit</directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
     <php>
-        <ini name="error_reporting" value="-1"/>
-        <ini name="memory_limit" value="-1"/>
+        <ini name="allow_url_include" value="1" />
     </php>
-    <listeners>
-        <listener class="JohnKary\PHPUnit\Listener\SpeedTrapListener">
-            <arguments>
-                <array>
-                    <element key="slowThreshold">
-                        <integer>1000</integer>
-                    </element>
-                </array>
-            </arguments>
-        </listener>
-    </listeners>
 </phpunit>

@@ -1,66 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline;
 
 use Psr\Log\LoggerInterface;
 
 class IteratorLoggingWrapper implements \Iterator
 {
-    /**
-     * @var \Iterator
-     */
-    private $wrapped;
+    private ?\ReflectionGenerator $reflectionGenerator = null;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private ?\ReflectionObject $reflectionObject = null;
 
-    /**
-     * @var \ReflectionGenerator|null
-     */
-    private $reflectionGenerator;
-
-    /**
-     * @var \ReflectionObject|null
-     */
-    private $reflectionObject;
-
-    /**
-     * @param \Iterator $wrapped
-     * @param LoggerInterface $logger
-     */
-    public function __construct(\Iterator $wrapped, LoggerInterface $logger)
+    public function __construct(private readonly \Iterator $wrapped, private readonly LoggerInterface $logger)
     {
-        $this->wrapped = $wrapped;
-        $this->logger = $logger;
-
         if ($this->wrapped instanceof \Generator) {
             try {
                 $this->reflectionGenerator = new \ReflectionGenerator($this->wrapped);
             } catch (\ReflectionException $e) {
-                throw new \RuntimeException('An error occured during reflection.', null, $e);
+                throw new \RuntimeException('An error occured during reflection.', 0, $e);
             }
         }
 
         try {
             $this->reflectionObject = new \ReflectionObject($this->wrapped);
         } catch (\ReflectionException $e) {
-            throw new \RuntimeException('An error occured during reflection.', null, $e);
+            throw new \RuntimeException('An error occured during reflection.', 0, $e);
         }
     }
 
-    private function debug(string $calledMethod, \Iterator $iterator, $value = null)
+    private function debug(string $calledMethod, \Iterator $iterator, $value = null): void
     {
         try {
             $message = 'Wrapped %type%->%iter% [%object%]: ';
-            if ($this->reflectionGenerator !== null) {
+            if (null !== $this->reflectionGenerator) {
                 $function = $this->reflectionGenerator->getFunction();
                 $functionName = $function->getName();
 
                 if ($function instanceof \ReflectionMethod) {
                     $class = $function->getDeclaringClass();
-                    $functionName = $class->getName() . '::' . $function->getName();
+                    $functionName = $class->getName().'::'.$function->getName();
                 }
 
                 $options = [
@@ -80,7 +59,7 @@ class IteratorLoggingWrapper implements \Iterator
                     'type' => $this->wrapped instanceof \Generator ? 'generator' : 'iterator',
                 ];
             }
-        } catch (\ReflectionException $e) {
+        } catch (\ReflectionException) {
             $message = 'Wrapped %type%->%iter% [%object%]: [terminated] ';
 
             $options = [
@@ -90,7 +69,7 @@ class IteratorLoggingWrapper implements \Iterator
             ];
         }
 
-        if (func_num_args() === 2) {
+        if (2 === \func_num_args()) {
             $options = array_merge(
                 $options,
                 [
@@ -102,11 +81,11 @@ class IteratorLoggingWrapper implements \Iterator
         $parameters = [];
         $fields = [];
         foreach ($options as $key => $value) {
-            if (!in_array($key, ['type', 'iter', 'object'])) {
+            if (!\in_array($key, ['type', 'iter', 'object'])) {
                 $fields[] = $key.'=%'.$key.'%';
-                $parameters['%' . $key . '%'] = var_export($value, true);
+                $parameters['%'.$key.'%'] = var_export($value, true);
             } else {
-                $parameters['%' . $key . '%'] = $value;
+                $parameters['%'.$key.'%'] = $value;
             }
         }
 
@@ -115,7 +94,7 @@ class IteratorLoggingWrapper implements \Iterator
         $this->logger->debug(strtr($message, $parameters));
     }
 
-    public function current()
+    public function current(): mixed
     {
         $current = $this->wrapped->current();
 
@@ -124,14 +103,14 @@ class IteratorLoggingWrapper implements \Iterator
         return $current;
     }
 
-    public function next()
+    public function next(): void
     {
         $this->wrapped->next();
 
         $this->debug(__FUNCTION__, $this->wrapped);
     }
 
-    public function key()
+    public function key(): mixed
     {
         $key = $this->wrapped->key();
 
@@ -140,7 +119,7 @@ class IteratorLoggingWrapper implements \Iterator
         return $key;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         $valid = $this->wrapped->valid();
 
@@ -149,7 +128,7 @@ class IteratorLoggingWrapper implements \Iterator
         return $valid;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->wrapped->rewind();
 

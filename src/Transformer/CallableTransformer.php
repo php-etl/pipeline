@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
@@ -12,14 +14,13 @@ class CallableTransformer implements TransformerInterface
     /** @var callable */
     private $callback;
 
-    /** @param callable $callback */
     public function __construct(
         callable $callback
     ) {
         $this->callback = $callback;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
+    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function transform(): \Generator
     {
         $line = yield new EmptyResultBucket();
