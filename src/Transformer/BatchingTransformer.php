@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AppendableIteratorAcceptanceResultBucket;
@@ -13,12 +15,12 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
 {
     private ResultBucketInterface $bucket;
 
-    public function __construct(private int $batchSize)
+    public function __construct(private readonly int $batchSize)
     {
         $this->bucket = new EmptyResultBucket();
     }
 
-    /** @return \Generator<mixed, AppendableIteratorAcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
+    /** @return \Generator<mixed, AppendableIteratorAcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function transform(): \Generator
     {
         $this->bucket = new AppendableIteratorAcceptanceResultBucket();

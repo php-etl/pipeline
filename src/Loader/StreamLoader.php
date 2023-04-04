@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Loader;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
@@ -8,6 +10,7 @@ use Kiboko\Contract\Pipeline\LoaderInterface;
 
 /**
  * @template Type
+ *
  * @template-implements LoaderInterface<Type>
  */
 abstract class StreamLoader implements LoaderInterface
@@ -18,21 +21,19 @@ abstract class StreamLoader implements LoaderInterface
     /** @param resource $stream */
     public function __construct($stream)
     {
-        if (!is_resource($stream) || get_resource_type($stream) !== 'stream') {
-            throw new \InvalidArgumentException(
-                'Argument provided is not the valid type, please provide a stream resource.'
-            );
+        if (!\is_resource($stream) || 'stream' !== get_resource_type($stream)) {
+            throw new \InvalidArgumentException('Argument provided is not the valid type, please provide a stream resource.');
         }
 
         $this->stream = $stream;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, null|Type, void> */
+    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
         while (true) {
-            fwrite($this->stream, $this->formatLine($line));
+            fwrite($this->stream, (string) $this->formatLine($line));
             $line = yield new AcceptanceResultBucket($line);
         }
     }

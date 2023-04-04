@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace unit\Kiboko\Component\ETL\Pipeline;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
@@ -7,11 +9,16 @@ use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Component\Pipeline\PipelineRunner;
 use Kiboko\Contract\Pipeline\NullRejection;
 use Kiboko\Contract\Pipeline\NullState;
+use PHPUnit\Framework\TestResult;
 use Psr\Log\NullLogger;
 
+/**
+ * @internal
+ */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
 class PipelineRunnerTest extends IterableTestCase
 {
-    public function providerRun()
+    public static function providerRun()
     {
         // Test if pipeline can walk items, without adding or removing any item
         yield [
@@ -23,7 +30,7 @@ class PipelineRunnerTest extends IterableTestCase
                 'amet',
                 'consecutir',
             ]),
-            function() {
+            function () {
                 $item = yield;
                 while (true) {
                     $item = yield new AcceptanceResultBucket(strrev($item));
@@ -36,7 +43,7 @@ class PipelineRunnerTest extends IterableTestCase
                 'tis',
                 'tema',
                 'ritucesnoc',
-            ]
+            ],
         ];
 
         // Test if pipeline can walk items, while removing some items
@@ -49,11 +56,11 @@ class PipelineRunnerTest extends IterableTestCase
                 'amet',
                 'consecutir',
             ]),
-            function() {
+            function () {
                 $item = yield;
                 while (true) {
                     static $i = 0;
-                    if ($i++ % 2 === 0) {
+                    if (0 === $i++ % 2) {
                         $item = yield new AcceptanceResultBucket(strrev($item));
                     } else {
                         $item = yield new EmptyResultBucket();
@@ -64,7 +71,7 @@ class PipelineRunnerTest extends IterableTestCase
                 'merol',
                 'rolod',
                 'tema',
-            ]
+            ],
         ];
 
         // Test if pipeline can walk items, while adding some items
@@ -77,7 +84,7 @@ class PipelineRunnerTest extends IterableTestCase
                 'amet',
                 'consecutir',
             ]),
-            function() {
+            function () {
                 $item = yield;
                 while (true) {
                     $item = yield new AcceptanceResultBucket(
@@ -99,18 +106,12 @@ class PipelineRunnerTest extends IterableTestCase
                 'tema',
                 'consecutir',
                 'ritucesnoc',
-            ]
+            ],
         ];
     }
 
-    /**
-     * @param \Iterator $source
-     * @param callable  $callback
-     * @param array     $expected
-     *
-     * @dataProvider providerRun
-     */
-    public function testRun(\Iterator $source, callable $callback, array $expected)
+    #[\PHPUnit\Framework\Attributes\DataProvider('providerRun')]
+    public function testRun(\Iterator $source, callable $callback, array $expected): void
     {
         $run = new PipelineRunner(new NullLogger());
 

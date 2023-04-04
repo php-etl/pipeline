@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Loader;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
@@ -10,22 +12,16 @@ use Psr\Log\LogLevel;
 
 /**
  * @template Type
+ *
  * @template-implements LoaderInterface<Type>
  */
-final class LogLoader implements LoaderInterface
+final readonly class LogLoader implements LoaderInterface
 {
-    /** @var LoggerInterface */
-    private $logger;
-    /** @var string */
-    private $logLevel;
-
-    public function __construct(LoggerInterface $logger, string $logLevel = LogLevel::DEBUG)
+    public function __construct(private LoggerInterface $logger, private string $logLevel = LogLevel::DEBUG)
     {
-        $this->logger = $logger;
-        $this->logLevel = $logLevel;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, null|Type, void> */
+    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();

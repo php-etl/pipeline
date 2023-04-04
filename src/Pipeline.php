@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline;
 
 use Kiboko\Contract\Pipeline\ExtractingInterface;
@@ -18,10 +20,10 @@ use Kiboko\Contract\Pipeline\WalkableInterface;
 
 class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
-    private \AppendIterator $source;
+    private readonly \AppendIterator $source;
     private iterable $subject;
 
-    public function __construct(private PipelineRunnerInterface $runner, ?\Iterator $source = null)
+    public function __construct(private readonly PipelineRunnerInterface $runner, ?\Iterator $source = null)
     {
         $this->source = new \AppendIterator();
         $this->source->append($source ?? new \EmptyIterator());
@@ -37,7 +39,8 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private function passThroughCoroutine(): \Generator
     {
         $line = yield;
-        while ($line = yield $line);
+        while ($line = yield $line) {
+        }
     }
 
     public function extract(
@@ -46,7 +49,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         StateInterface $state,
     ): ExtractingInterface {
         $extract = $extractor->extract();
-        if (is_array($extract)) {
+        if (\is_array($extract)) {
             $this->source->append(
                 $this->runner->run(
                     new \ArrayIterator($extract),
@@ -168,7 +171,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         yield from $this->subject;
     }
 
-    public function run(): int
+    public function run(int $interval = 1000): int
     {
         return iterator_count($this->walk());
     }

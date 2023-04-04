@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Loader;
 
 final class StdoutLoader extends StreamLoader
 {
     public function __construct()
     {
-        parent::__construct(STDOUT);
+        parent::__construct(\STDOUT);
     }
 
     protected function formatLine($line)
     {
-        return var_export($line, true) . PHP_EOL;
+        return var_export($line, true).\PHP_EOL;
     }
 }

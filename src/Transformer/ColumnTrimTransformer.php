@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
@@ -8,22 +10,23 @@ use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
  * @template Type
+ *
  * @template-implements TransformerInterface<array>
  */
 class ColumnTrimTransformer implements TransformerInterface
 {
     /** @param list<string> $columnsToTrim */
     public function __construct(
-        private array $columnsToTrim
+        private readonly array $columnsToTrim
     ) {
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, null|Type, void> */
+    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function transform(): \Generator
     {
         $line = yield new EmptyResultBucket();
         while (true) {
-            if ($line === null) {
+            if (null === $line) {
                 $line = yield new EmptyResultBucket();
                 continue;
             }
@@ -32,7 +35,7 @@ class ColumnTrimTransformer implements TransformerInterface
                     continue;
                 }
 
-                $line[$column] = trim($line[$column]);
+                $line[$column] = trim((string) $line[$column]);
             }
             $line = yield new AcceptanceResultBucket($line);
         }
