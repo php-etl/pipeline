@@ -19,11 +19,9 @@ use Psr\Log\NullLogger;
 /**
  * @internal
  */
-#[\PHPUnit\Framework\Attributes\CoversNothing]
 final class PipelineTest extends IterableTestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function extractorWithoutFlush(): void
+    public function testExtractorWithoutFlush(): void
     {
         $pipeline = new Pipeline(new PipelineRunner(new NullLogger()));
 
@@ -42,8 +40,7 @@ final class PipelineTest extends IterableTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function transformerWithoutFlush(): void
+    public function testTransformerWithoutFlush(): void
     {
         $pipeline = new Pipeline(new PipelineRunner(new NullLogger()));
 
@@ -65,8 +62,7 @@ final class PipelineTest extends IterableTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function transformerWithFlush(): void
+    public function testTransformerWithFlush(): void
     {
         $pipeline = new Pipeline(new PipelineRunner(new NullLogger()));
 
@@ -93,8 +89,7 @@ final class PipelineTest extends IterableTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function loaderWithoutFlush(): void
+    public function testLoaderWithoutFlush(): void
     {
         $pipeline = new Pipeline(new PipelineRunner(new NullLogger()));
 
@@ -116,8 +111,7 @@ final class PipelineTest extends IterableTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
-    public function loaderWithFlush(): void
+    public function testLoaderWithFlush(): void
     {
         $pipeline = new Pipeline(new PipelineRunner(new NullLogger()));
 
