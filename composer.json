@@ -17,7 +17,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
-        "psr/log": "^1.1",
+        "psr/log": "^3.0",
         "php-etl/bucket": "*",
         "php-etl/pipeline-contracts": "0.4.0",
         "php-etl/bucket-contracts": "0.2.0"
