@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline;
 
+use Kiboko\Contract\Job\RunnableInterface;
 use Kiboko\Contract\Pipeline\ExtractingInterface;
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 use Kiboko\Contract\Pipeline\FlushableInterface;
@@ -12,7 +13,6 @@ use Kiboko\Contract\Pipeline\LoadingInterface;
 use Kiboko\Contract\Pipeline\PipelineInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
 use Kiboko\Contract\Pipeline\RejectionInterface;
-use Kiboko\Contract\Pipeline\RunnableInterface;
 use Kiboko\Contract\Pipeline\StateInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 use Kiboko\Contract\Pipeline\TransformingInterface;
