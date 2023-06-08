@@ -6,12 +6,12 @@ namespace Kiboko\Component\Pipeline;
 
 final class UnexpectedYieldedValueType extends \UnexpectedValueException
 {
-    public function __construct(private readonly \Generator $coroutine, string $message = null, int $code = null, ?\Exception $previous = null)
+    public function __construct(private readonly \Generator $coroutine, string $message = null, int $code = 0, ?\Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
 
-    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = null, ?\Exception $previous = null): self
+    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = 0, ?\Exception $previous = null): self
     {
         try {
             $re = new \ReflectionGenerator($coroutine);
