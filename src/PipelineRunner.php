@@ -8,6 +8,7 @@ use Kiboko\Contract\Bucket\AcceptanceResultBucketInterface;
 use Kiboko\Contract\Bucket\RejectionResultBucketInterface;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
+use Kiboko\Contract\Pipeline\Rejection;
 use Kiboko\Contract\Pipeline\RejectionInterface;
 use Kiboko\Contract\Pipeline\StateInterface;
 use Psr\Log\LoggerInterface;
@@ -45,7 +46,12 @@ class PipelineRunner implements PipelineRunnerInterface
 
             if ($bucket instanceof RejectionResultBucketInterface) {
                 foreach ($bucket->walkRejection() as $line) {
-                    $rejection->reject($line);
+                    if ($line instanceof Rejection) {
+                        $rejection->rejectWithReason($line);
+                    } else {
+                        $rejection->reject($line);
+                    }
+
                     $state->reject();
 
                     $this->logger->log(
