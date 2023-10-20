@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline;
 
+use Kiboko\Component\Bucket\RejectionResultBucket;
+use Kiboko\Component\Bucket\RejectionWithReasonResultBucket;
 use Kiboko\Contract\Bucket\AcceptanceResultBucketInterface;
 use Kiboko\Contract\Bucket\RejectionResultBucketInterface;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
@@ -44,17 +46,34 @@ class PipelineRunner implements PipelineRunnerInterface
             }
 
             if ($bucket instanceof RejectionResultBucketInterface) {
-                foreach ($bucket->walkRejection() as $line) {
-                    $rejection->reject($line);
-                    $state->reject();
+                if ($bucket instanceof RejectionResultBucket) {
+                    foreach ($bucket->walkRejection() as $line) {
+                        $rejection->reject($line);
+                        $state->reject();
 
-                    $this->logger->log(
-                        $this->rejectionLevel,
-                        'Some data was rejected from the pipeline',
-                        [
-                            'line' => $line,
-                        ]
-                    );
+                        $this->logger->log(
+                            $this->rejectionLevel,
+                            'Some data was rejected from the pipeline',
+                            [
+                                'line' => $line,
+                            ]
+                        );
+                    }
+                }
+
+                if ($bucket instanceof RejectionWithReasonResultBucket) {
+                    foreach ($bucket->walkRejection() as $line) {
+                        $rejection->rejectWithReason($line, $bucket->getReason());
+                        $state->reject();
+
+                        $this->logger->log(
+                            $this->rejectionLevel,
+                            'Some data was rejected from the pipeline',
+                            [
+                                'line' => $line,
+                            ]
+                        );
+                    }
                 }
             }
 
