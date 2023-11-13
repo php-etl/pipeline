@@ -27,9 +27,6 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     /** @var iterable<mixed>|\NoRewindIterator */
     private iterable $subject;
 
-    /**
-     * @param PipelineRunnerInterface<mixed> $runner
-     */
     public function __construct(
         private readonly PipelineRunnerInterface $runner,
         private readonly StateInterface $state,
@@ -49,6 +46,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private function passThroughCoroutine(): \Generator
     {
         $line = yield;
+        /** @phpstan-ignore-next-line */
         while (true) {
             $line = yield $line;
         }

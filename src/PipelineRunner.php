@@ -18,11 +18,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
-/**
- * @template Type
- *
- * @implements PipelineRunnerInterface<Type>
- */
 class PipelineRunner implements PipelineRunnerInterface
 {
     public function __construct(
@@ -52,9 +47,13 @@ class PipelineRunner implements PipelineRunnerInterface
             }
 
             if ($bucket instanceof RejectionResultBucketInterface) {
+                $reasons = $bucket->reasons();
                 foreach ($bucket->walkRejection() as $line) {
-                    $rejection->reject($line);
-                    $rejection->rejectWithReason($line, implode('', $bucket->reasons()));
+                    if ($reasons !== null) {
+                        $rejection->rejectWithReason($line, implode(PHP_EOL, $reasons));
+                    } else {
+                        $rejection->reject($line);
+                    }
                     $state->reject();
 
                     $this->logger->log(
