@@ -6,10 +6,10 @@ namespace Kiboko\Component\Pipeline;
 
 use Kiboko\Contract\Pipeline\StepCodeInterface;
 
-final class StepCode implements StepCodeInterface
+final readonly class StepCode implements StepCodeInterface
 {
     private function __construct(
-        private readonly string $reference,
+        private string $reference,
     ) {
     }
 
