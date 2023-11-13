@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline\Extractor;
 
-use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 
+/**
+ * @template Type
+ * @implements ExtractorInterface<Type>
+ */
 class IteratorExtractor implements ExtractorInterface
 {
+    /** @param \Traversable<mixed, Type> $traversable */
     public function __construct(private readonly \Traversable $traversable)
     {
     }

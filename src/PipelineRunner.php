@@ -18,10 +18,17 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
+/**
+ * @template Type
+ *
+ * @implements PipelineRunnerInterface<Type>
+ */
 class PipelineRunner implements PipelineRunnerInterface
 {
-    public function __construct(private readonly LoggerInterface $logger = new NullLogger(), private readonly string $rejectionLevel = LogLevel::WARNING)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger = new NullLogger(),
+        private readonly LogLevel|string $rejectionLevel = LogLevel::WARNING
+    ) {
     }
 
     public function run(
@@ -45,34 +52,18 @@ class PipelineRunner implements PipelineRunnerInterface
             }
 
             if ($bucket instanceof RejectionResultBucketInterface) {
-                if ($bucket instanceof RejectionResultBucket) {
-                    foreach ($bucket->walkRejection() as $line) {
-                        $rejection->reject($line);
-                        $state->reject();
+                foreach ($bucket->walkRejection() as $line) {
+                    $rejection->reject($line);
+                    $rejection->rejectWithReason($line, implode('', $bucket->reasons()));
+                    $state->reject();
 
-                        $this->logger->log(
-                            $this->rejectionLevel,
-                            'Some data was rejected from the pipeline',
-                            [
-                                'line' => $line,
-                            ]
-                        );
-                    }
-                }
-
-                if ($bucket instanceof RejectionWithReasonResultBucket) {
-                    foreach ($bucket->walkRejection() as $line) {
-                        $rejection->rejectWithReason($line, $bucket->getReason());
-                        $state->reject();
-
-                        $this->logger->log(
-                            $this->rejectionLevel,
-                            'Some data was rejected from the pipeline',
-                            [
-                                'line' => $line,
-                            ]
-                        );
-                    }
+                    $this->logger->log(
+                        $this->rejectionLevel,
+                        'Some data was rejected from the pipeline',
+                        [
+                            'line' => $line,
+                        ]
+                    );
                 }
             }
 

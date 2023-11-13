@@ -6,32 +6,36 @@ namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
-use Kiboko\Component\Metadata\Type;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
  * @template Type
  *
- * @template-implements TransformerInterface<Type>
+ * @template-implements TransformerInterface<Type, Type>
  */
 class FilterTransformer implements TransformerInterface
 {
-    /** @var callable */
+    /** @var callable(Type $item): bool */
     private $callback;
 
-    public function __construct(callable $callback)
-    {
+    /**
+     * @param callable(Type $item): bool $callback
+     */
+    public function __construct(
+        callable $callback,
+    ) {
         $this->callback = $callback;
     }
 
     /**
-     * @return \Generator<mixed, AcceptanceResultBucket<Type|mixed>|EmptyResultBucket, Type|null, void>
+     * @return \Generator<array-key, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void>
      */
     public function transform(): \Generator
     {
         $callback = $this->callback;
 
         $line = yield new EmptyResultBucket();
+        /** @phpstan-ignore-next-line */
         while (true) {
             if (null === $line || !$callback($line)) {
                 $line = yield new EmptyResultBucket();

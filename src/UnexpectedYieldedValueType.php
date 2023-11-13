@@ -4,14 +4,35 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline;
 
+use Kiboko\Contract\Bucket\ResultBucketInterface;
+
+/**
+ * @template InputType
+ * @template OutputType
+ */
 final class UnexpectedYieldedValueType extends \UnexpectedValueException
 {
-    public function __construct(private readonly \Generator $coroutine, string $message = null, int $code = null, ?\Exception $previous = null)
-    {
+    public function __construct(
+        private readonly \Generator $coroutine,
+        string $message = '',
+        int $code = 0,
+        ?\Throwable $previous = null
+    ) {
         parent::__construct($message, $code, $previous);
     }
 
-    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = null, ?\Exception $previous = null): self
+    public function getCoroutine(): \Generator
+    {
+        return $this->coroutine;
+    }
+
+    /**
+     * @param \Generator<array-key, ResultBucketInterface<OutputType>, InputType|null, void> $actual
+     * @param list<string> $expectedTypes
+     * @param mixed $actual
+     * @return UnexpectedYieldedValueType<InputType, OutputType>
+     */
+    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = 0, ?\Throwable $previous = null): self
     {
         try {
             $re = new \ReflectionGenerator($coroutine);

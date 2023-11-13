@@ -11,7 +11,7 @@ use Kiboko\Contract\Pipeline\LoaderInterface;
 /**
  * @template Type
  *
- * @template-implements LoaderInterface<Type>
+ * @implements LoaderInterface<Type, Type>
  */
 abstract class StreamLoader implements LoaderInterface
 {
@@ -32,11 +32,16 @@ abstract class StreamLoader implements LoaderInterface
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
+        /** @phpstan-ignore-next-line */
         while (true) {
-            fwrite($this->stream, (string) $this->formatLine($line));
+            fwrite($this->stream, $this->formatLine($line));
             $line = yield new AcceptanceResultBucket($line);
         }
     }
 
-    abstract protected function formatLine($line);
+    /**
+     * @param Type|null $line
+     * @return string
+     */
+    abstract protected function formatLine(mixed $line): string;
 }

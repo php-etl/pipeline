@@ -13,7 +13,7 @@ use Psr\Log\LogLevel;
 /**
  * @template Type
  *
- * @template-implements LoaderInterface<Type>
+ * @implements LoaderInterface<Type, Type>
  */
 final readonly class LogLoader implements LoaderInterface
 {
@@ -25,8 +25,10 @@ final readonly class LogLoader implements LoaderInterface
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
-        do {
+        /** @phpstan-ignore-next-line */
+        while (true) {
             $this->logger->log($this->logLevel, var_export($line, true));
-        } while ($line = yield new AcceptanceResultBucket($line));
+            $line = yield new AcceptanceResultBucket($line);
+        }
     }
 }

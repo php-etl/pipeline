@@ -24,8 +24,12 @@ use Kiboko\Contract\Pipeline\WalkableInterface;
 class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
     private readonly \AppendIterator $source;
+    /** @var iterable<mixed>|\NoRewindIterator */
     private iterable $subject;
 
+    /**
+     * @param PipelineRunnerInterface<mixed> $runner
+     */
     public function __construct(
         private readonly PipelineRunnerInterface $runner,
         private readonly StateInterface $state,
@@ -45,7 +49,9 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private function passThroughCoroutine(): \Generator
     {
         $line = yield;
-        while ($line = yield $line);
+        while (true) {
+            $line = yield $line;
+        }
     }
 
     public function extract(
