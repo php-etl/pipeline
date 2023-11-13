@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline\Extractor;
 
+use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 
 class IteratorExtractor implements ExtractorInterface

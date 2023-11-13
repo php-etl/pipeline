@@ -9,6 +9,8 @@ use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Component\Pipeline\PipelineRunner;
 use Kiboko\Contract\Pipeline\NullRejection;
 use Kiboko\Contract\Pipeline\NullState;
+use Kiboko\Contract\Pipeline\NullStepRejection;
+use Kiboko\Contract\Pipeline\NullStepState;
 use PHPUnit\Framework\TestResult;
 use Psr\Log\NullLogger;
 
@@ -115,7 +117,7 @@ class PipelineRunnerTest extends IterableTestCase
     {
         $run = new PipelineRunner(new NullLogger());
 
-        $it = $run->run($source, $callback(), new NullRejection(), new NullState());
+        $it = $run->run($source, $callback(), new NullStepRejection(), new NullStepState());
 
         $this->assertIteration(new \ArrayIterator($expected), $it);
     }

@@ -14,6 +14,9 @@ use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
 use Kiboko\Contract\Pipeline\RejectionInterface;
 use Kiboko\Contract\Pipeline\RunnableInterface;
 use Kiboko\Contract\Pipeline\StateInterface;
+use Kiboko\Contract\Pipeline\StepCodeInterface;
+use Kiboko\Contract\Pipeline\StepRejectionInterface;
+use Kiboko\Contract\Pipeline\StepStateInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 use Kiboko\Contract\Pipeline\TransformingInterface;
 use Kiboko\Contract\Pipeline\WalkableInterface;
@@ -23,8 +26,11 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private readonly \AppendIterator $source;
     private iterable $subject;
 
-    public function __construct(private readonly PipelineRunnerInterface $runner, ?\Iterator $source = null)
-    {
+    public function __construct(
+        private readonly PipelineRunnerInterface $runner,
+        private readonly StateInterface $state,
+        ?\Iterator $source = null
+    ) {
         $this->source = new \AppendIterator();
         $this->source->append($source ?? new \EmptyIterator());
 
@@ -39,14 +45,14 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private function passThroughCoroutine(): \Generator
     {
         $line = yield;
-        while ($line = yield $line) {
-        }
+        while ($line = yield $line);
     }
 
     public function extract(
+        StepCodeInterface $stepCode,
         ExtractorInterface $extractor,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): ExtractingInterface {
         $extract = $extractor->extract();
         if (\is_array($extract)) {
@@ -84,9 +90,10 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     }
 
     public function transform(
+        StepCodeInterface $stepCode,
         TransformerInterface $transformer,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): TransformingInterface {
         if ($transformer instanceof FlushableInterface) {
             $iterator = new \AppendIterator();
@@ -125,9 +132,10 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     }
 
     public function load(
+        StepCodeInterface $stepCode,
         LoaderInterface $loader,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): LoadingInterface {
         if ($loader instanceof FlushableInterface) {
             $iterator = new \AppendIterator();
@@ -168,7 +176,11 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
 
     public function walk(): \Iterator
     {
+        $this->state->initialize();
+
         yield from $this->subject;
+
+        $this->state->teardown();
     }
 
     public function run(int $interval = 1000): int

@@ -10,6 +10,8 @@ use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
 use Kiboko\Contract\Pipeline\RejectionInterface;
 use Kiboko\Contract\Pipeline\StateInterface;
+use Kiboko\Contract\Pipeline\StepRejectionInterface;
+use Kiboko\Contract\Pipeline\StepStateInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
@@ -23,12 +25,9 @@ class PipelineRunner implements PipelineRunnerInterface
     public function run(
         \Iterator $source,
         \Generator $coroutine,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): \Iterator {
-        $state->initialize();
-        $rejection->initialize();
-
         $wrapper = new GeneratorWrapper();
         $wrapper->rewind($source, $coroutine);
 
@@ -69,8 +68,5 @@ class PipelineRunner implements PipelineRunnerInterface
 
             $wrapper->next($source);
         }
-
-        $state->teardown();
-        $rejection->teardown();
     }
 }
