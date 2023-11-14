@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19f3f0589f701d6b3dcf9169515b6ed9",
+    "content-hash": "04a6a721717460b4425a9ead233ee49c",
     "packages": [
         {
             "name": "php-etl/bucket",
-            "version": "v0.3.0",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket.git",
-                "reference": "4c63c1a55f93956634a53662dfd4cde1833ddcee"
+                "reference": "96b2549417b603abdee3f193d7d3074c0672f45a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket/zipball/4c63c1a55f93956634a53662dfd4cde1833ddcee",
-                "reference": "4c63c1a55f93956634a53662dfd4cde1833ddcee",
+                "url": "https://api.github.com/repos/php-etl/bucket/zipball/96b2549417b603abdee3f193d7d3074c0672f45a",
+                "reference": "96b2549417b603abdee3f193d7d3074c0672f45a",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2",
-                "php-etl/bucket-contracts": "0.2.*"
+                "php-etl/bucket-contracts": "0.3.*"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
@@ -30,10 +30,11 @@
                 "phpstan/phpstan": "^1.10",
                 "rector/rector": "^0.15"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "0.3.x-dev"
+                    "dev-main": "0.4.x-dev"
                 }
             },
             "autoload": {
@@ -58,22 +59,22 @@
             "description": "This library implements the Extract-Transform-Load pattern asynchronously in PHP with the help of iterators and generators",
             "support": {
                 "issues": "https://github.com/php-etl/bucket/issues",
-                "source": "https://github.com/php-etl/bucket/tree/v0.3.0"
+                "source": "https://github.com/php-etl/bucket/tree/main"
             },
-            "time": "2023-04-12T12:40:59+00:00"
+            "time": "2023-11-14T10:16:20+00:00"
         },
         {
             "name": "php-etl/bucket-contracts",
-            "version": "v0.2.0",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket-contracts.git",
-                "reference": "e96726f9b89dea7308482fa6c2ce4db0757960ce"
+                "reference": "b9595871228a1c41e9da9c6d9e883a28123f4a10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket-contracts/zipball/e96726f9b89dea7308482fa6c2ce4db0757960ce",
-                "reference": "e96726f9b89dea7308482fa6c2ce4db0757960ce",
+                "url": "https://api.github.com/repos/php-etl/bucket-contracts/zipball/b9595871228a1c41e9da9c6d9e883a28123f4a10",
+                "reference": "b9595871228a1c41e9da9c6d9e883a28123f4a10",
                 "shasum": ""
             },
             "require": {
@@ -84,10 +85,11 @@
                 "phpstan/phpstan": "^1.10",
                 "rector/rector": "^0.15"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "0.2.x-dev"
+                    "dev-main": "0.3.x-dev"
                 }
             },
             "autoload": {
@@ -112,9 +114,9 @@
             "description": "This library describes contracts for the data-interchange buckets.",
             "support": {
                 "issues": "https://github.com/php-etl/bucket-contracts/issues",
-                "source": "https://github.com/php-etl/bucket-contracts/tree/v0.2.0"
+                "source": "https://github.com/php-etl/bucket-contracts/tree/main"
             },
-            "time": "2023-04-03T12:42:10+00:00"
+            "time": "2023-11-14T08:49:46+00:00"
         },
         {
             "name": "php-etl/pipeline-contracts",
@@ -122,17 +124,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/pipeline-contracts.git",
-                "reference": "632e119b1cf722955870cac1120e92e30f705c48"
+                "reference": "18f75049a19c137ba46c8b7d10dce4e4a502cf39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/632e119b1cf722955870cac1120e92e30f705c48",
-                "reference": "632e119b1cf722955870cac1120e92e30f705c48",
+                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/18f75049a19c137ba46c8b7d10dce4e4a502cf39",
+                "reference": "18f75049a19c137ba46c8b7d10dce4e4a502cf39",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2",
-                "php-etl/bucket-contracts": "0.2.*",
+                "php-etl/bucket-contracts": "0.3.*",
                 "php-etl/satellite-contracts": "0.1.*"
             },
             "require-dev": {
@@ -171,7 +173,7 @@
                 "issues": "https://github.com/php-etl/pipeline-contracts/issues",
                 "source": "https://github.com/php-etl/pipeline-contracts/tree/main"
             },
-            "time": "2023-11-13T16:40:59+00:00"
+            "time": "2023-11-14T10:45:05+00:00"
         },
         {
             "name": "php-etl/satellite-contracts",
@@ -649,16 +651,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.38.0",
+            "version": "v3.38.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "7e6070026e76aa09d77a47519625c86593fb8e31"
+                "reference": "d872cdd543797ade030aaa307c0a4954a712e081"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/7e6070026e76aa09d77a47519625c86593fb8e31",
-                "reference": "7e6070026e76aa09d77a47519625c86593fb8e31",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/d872cdd543797ade030aaa307c0a4954a712e081",
+                "reference": "d872cdd543797ade030aaa307c0a4954a712e081",
                 "shasum": ""
             },
             "require": {
@@ -730,7 +732,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.38.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.38.2"
             },
             "funding": [
                 {
@@ -738,7 +740,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-07T08:44:54+00:00"
+            "time": "2023-11-14T00:19:22+00:00"
         },
         {
             "name": "infection/abstract-testframework-adapter",

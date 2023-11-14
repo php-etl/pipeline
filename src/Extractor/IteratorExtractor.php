@@ -7,7 +7,7 @@ namespace Kiboko\Component\Pipeline\Extractor;
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  * @implements ExtractorInterface<Type>
  */
 class IteratorExtractor implements ExtractorInterface

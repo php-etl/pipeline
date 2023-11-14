@@ -9,7 +9,7 @@ use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Pipeline\LoaderInterface;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  *
  * @implements LoaderInterface<Type, Type>
  */
@@ -28,12 +28,17 @@ abstract class StreamLoader implements LoaderInterface
         $this->stream = $stream;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, Type|null, void> */
+    /** @return \Generator<positive-int, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
         /** @phpstan-ignore-next-line */
         while (true) {
+            if ($line === null) {
+                $line = yield new EmptyResultBucket();
+                continue;
+            }
+
             fwrite($this->stream, $this->formatLine($line));
             $line = yield new AcceptanceResultBucket($line);
         }

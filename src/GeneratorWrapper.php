@@ -7,11 +7,11 @@ namespace Kiboko\Component\Pipeline;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  */
 class GeneratorWrapper
 {
-    /** @param \Iterator<array-key, Type> ...$iterators */
+    /** @param \Iterator<positive-int, Type> ...$iterators */
     public function rewind(\Iterator ...$iterators): void
     {
         foreach ($iterators as $iterator) {
@@ -19,7 +19,7 @@ class GeneratorWrapper
         }
     }
 
-    /** @param \Iterator<array-key, Type> ...$iterators */
+    /** @param \Iterator<positive-int, Type> ...$iterators */
     public function next(\Iterator ...$iterators): void
     {
         foreach ($iterators as $iterator) {
@@ -27,7 +27,7 @@ class GeneratorWrapper
         }
     }
 
-    /** @param \Iterator<array-key, Type> ...$iterators */
+    /** @param \Iterator<positive-int, Type> ...$iterators */
     public function valid(\Iterator ...$iterators): bool
     {
         foreach ($iterators as $iterator) {
@@ -41,7 +41,7 @@ class GeneratorWrapper
 
     /**
      * @param Type $value
-     * @param \Generator<array-key, ResultBucketInterface<Type>, Type, void> ...$generators
+     * @param \Generator<positive-int, ResultBucketInterface<Type>, Type, void> ...$generators
      */
     public function send($value, \Generator ...$generators): \Generator
     {

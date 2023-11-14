@@ -11,8 +11,6 @@ use Kiboko\Contract\Pipeline\LoaderInterface;
 use Kiboko\Contract\Pipeline\LoadingInterface;
 use Kiboko\Contract\Pipeline\PipelineInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
-use Kiboko\Contract\Pipeline\RejectionInterface;
-use Kiboko\Contract\Pipeline\RunnableInterface;
 use Kiboko\Contract\Pipeline\StateInterface;
 use Kiboko\Contract\Pipeline\StepCodeInterface;
 use Kiboko\Contract\Pipeline\StepRejectionInterface;
@@ -20,11 +18,13 @@ use Kiboko\Contract\Pipeline\StepStateInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 use Kiboko\Contract\Pipeline\TransformingInterface;
 use Kiboko\Contract\Pipeline\WalkableInterface;
+use Kiboko\Contract\Satellite\RunnableInterface;
 
 class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
+    /** @var \AppendIterator<positive-int, non-empty-array<array-key, mixed>|object, \Iterator<positive-int, non-empty-array<array-key, mixed>|object>> */
     private readonly \AppendIterator $source;
-    /** @var iterable<mixed>|\NoRewindIterator */
+    /** @var \Iterator<positive-int, non-empty-array<array-key, mixed>|object>|\NoRewindIterator */
     private iterable $subject;
 
     public function __construct(
@@ -38,6 +38,12 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         $this->subject = new \NoRewindIterator($this->source);
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param InputType ...$data
+     * @return void
+     */
     public function feed(...$data): void
     {
         $this->source->append(new \ArrayIterator($data));
@@ -52,6 +58,12 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         }
     }
 
+    /**
+     * @template Type of non-empty-array<array-key, mixed>|object
+     *
+     * @param ExtractorInterface<Type> $extractor
+     * @param StepRejectionInterface<Type> $rejection
+     */
     public function extract(
         StepCodeInterface $stepCode,
         ExtractorInterface $extractor,
@@ -65,7 +77,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                     new \ArrayIterator($extract),
                     $this->passThroughCoroutine(),
                     $rejection,
-                    $state
+                    $state,
                 )
             );
         } elseif ($extract instanceof \Iterator) {
@@ -74,7 +86,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                     $extract,
                     $this->passThroughCoroutine(),
                     $rejection,
-                    $state
+                    $state,
                 )
             );
         } elseif ($extract instanceof \Traversable) {
@@ -83,7 +95,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                     new \IteratorIterator($extract),
                     $this->passThroughCoroutine(),
                     $rejection,
-                    $state
+                    $state,
                 )
             );
         } else {
@@ -93,6 +105,13 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         return $this;
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template OutputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param TransformerInterface<InputType, OutputType> $transformer
+     * @param StepRejectionInterface<InputType> $rejection
+     */
     public function transform(
         StepCodeInterface $stepCode,
         TransformerInterface $transformer,
@@ -135,6 +154,13 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         return $this;
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template OutputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param LoaderInterface<InputType, OutputType> $loader
+     * @param StepRejectionInterface<InputType> $rejection
+     */
     public function load(
         StepCodeInterface $stepCode,
         LoaderInterface $loader,

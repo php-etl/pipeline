@@ -9,7 +9,10 @@ use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template-implements TransformerInterface<non-empty-array<array-key, string>, non-empty-array<array-key, string>>
+ * @template InputType of non-empty-array<array-key, mixed>|object
+ * @template OutputType of non-empty-array<array-key, mixed>|object
+ *
+ * @implements TransformerInterface<InputType, OutputType>
  */
 class ColumnTrimTransformer implements TransformerInterface
 {
@@ -19,9 +22,7 @@ class ColumnTrimTransformer implements TransformerInterface
     ) {
     }
 
-    /**
-     * @return \Generator<array-key, AcceptanceResultBucket<non-empty-array<array-key, string>>|EmptyResultBucket, non-empty-array<array-key, string>|null, void>
-     */
+    /** @return \Generator<positive-int, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void> */
     public function transform(): \Generator
     {
         $line = yield new EmptyResultBucket();
@@ -38,6 +39,7 @@ class ColumnTrimTransformer implements TransformerInterface
 
                 $line[$column] = trim((string) $line[$column]);
             }
+            /** @phpstan-ignore-next-line */
             $line = yield new AcceptanceResultBucket($line);
         }
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kiboko\Component\Pipeline\Loader;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  *
  * @extends StreamLoader<Type>
  */

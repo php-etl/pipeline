@@ -26,6 +26,16 @@ class PipelineRunner implements PipelineRunnerInterface
     ) {
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template OutputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param \Iterator<positive-int, InputType|null> $source
+     * @param \Generator<positive-int, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
+     * @param StepRejectionInterface<InputType> $rejection
+     * @param StepStateInterface $state
+     * @return \Iterator<positive-int, ResultBucketInterface<OutputType>>
+     */
     public function run(
         \Iterator $source,
         \Generator $coroutine,
@@ -43,7 +53,7 @@ class PipelineRunner implements PipelineRunnerInterface
             }
 
             if (!$bucket instanceof ResultBucketInterface) {
-                throw UnexpectedYieldedValueType::expectingTypes($coroutine, [ResultBucketInterface::class], $bucket);
+                throw UnexpectedYieldedValueType::expectingTypes($coroutine, [ResultBucketInterface::class, AcceptanceResultBucketInterface::class, RejectionResultBucketInterface::class], $bucket);
             }
 
             if ($bucket instanceof RejectionResultBucketInterface) {
@@ -64,10 +74,6 @@ class PipelineRunner implements PipelineRunnerInterface
                         ]
                     );
                 }
-            }
-
-            if (!$bucket instanceof ResultBucketInterface) {
-                throw UnexpectedYieldedValueType::expectingTypes($coroutine, [ResultBucketInterface::class, AcceptanceResultBucketInterface::class, RejectionResultBucketInterface::class], $bucket);
             }
 
             if ($bucket instanceof AcceptanceResultBucketInterface) {

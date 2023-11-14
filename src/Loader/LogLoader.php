@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  *
  * @implements LoaderInterface<Type, Type>
  */
@@ -21,12 +21,17 @@ final readonly class LogLoader implements LoaderInterface
     {
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, Type|null, void> */
+    /** @return \Generator<positive-int, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
         /** @phpstan-ignore-next-line */
         while (true) {
+            if ($line === null) {
+                $line = yield new EmptyResultBucket();
+                continue;
+            }
+
             $this->logger->log($this->logLevel, var_export($line, true));
             $line = yield new AcceptanceResultBucket($line);
         }

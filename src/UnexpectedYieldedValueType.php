@@ -7,8 +7,8 @@ namespace Kiboko\Component\Pipeline;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 
 /**
- * @template InputType
- * @template OutputType
+ * @template InputType of non-empty-array<array-key, mixed>|object
+ * @template OutputType of non-empty-array<array-key, mixed>|object
  */
 final class UnexpectedYieldedValueType extends \UnexpectedValueException
 {
@@ -27,9 +27,10 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
     }
 
     /**
-     * @param \Generator<array-key, ResultBucketInterface<OutputType>, InputType|null, void> $actual
+     * @param \Generator<positive-int, ResultBucketInterface<OutputType>, InputType, void> $actual
      * @param list<string> $expectedTypes
      * @param mixed $actual
+     *
      * @return UnexpectedYieldedValueType<InputType, OutputType>
      */
     public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = 0, ?\Throwable $previous = null): self
@@ -47,6 +48,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
             $executionFile = $re->getExecutingFile();
             $executionLine = $re->getExecutingLine();
 
+            /** @phpstan-ignore-next-line */
             return new self(
                 $coroutine,
                 strtr(
@@ -63,6 +65,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                 $previous
             );
         } catch (\ReflectionException) {
+            /** @phpstan-ignore-next-line */
             return new self(
                 $coroutine,
                 strtr(

@@ -9,18 +9,16 @@ use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  *
- * @template-implements TransformerInterface<Type, Type>
+ * @implements TransformerInterface<Type, Type>
  */
 class FilterTransformer implements TransformerInterface
 {
     /** @var callable(Type $item): bool */
     private $callback;
 
-    /**
-     * @param callable(Type $item): bool $callback
-     */
+    /** @param callable(Type $item): bool $callback */
     public function __construct(
         callable $callback,
     ) {
@@ -28,7 +26,7 @@ class FilterTransformer implements TransformerInterface
     }
 
     /**
-     * @return \Generator<array-key, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void>
+     * @return \Generator<positive-int, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void>
      */
     public function transform(): \Generator
     {

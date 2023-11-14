@@ -9,8 +9,8 @@ use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template InputType
- * @template OutputType
+ * @template InputType of non-empty-array<array-key, mixed>|object
+ * @template OutputType of non-empty-array<array-key, mixed>|object
  *
  * @template-implements TransformerInterface<InputType, OutputType>
  */
@@ -20,7 +20,7 @@ class CallableTransformer implements TransformerInterface
     private $callback;
 
     /**
-     * @param callable(InputType|null $item): OutputType $callback
+     * @param callable(InputType $item): OutputType $callback
      */
     public function __construct(
         callable $callback,
@@ -29,7 +29,7 @@ class CallableTransformer implements TransformerInterface
     }
 
     /**
-     * @return \Generator<array-key, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void>
+     * @return \Generator<positive-int, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void>
      */
     public function transform(): \Generator
     {
@@ -38,6 +38,11 @@ class CallableTransformer implements TransformerInterface
         $line = yield new EmptyResultBucket();
         /** @phpstan-ignore-next-line */
         while (true) {
+            if ($line === null) {
+                $line = yield new EmptyResultBucket();
+                continue;
+            }
+
             $line = yield new AcceptanceResultBucket($callback($line));
         }
     }
