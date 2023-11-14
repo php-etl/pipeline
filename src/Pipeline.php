@@ -22,9 +22,9 @@ use Kiboko\Contract\Satellite\RunnableInterface;
 
 class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
-    /** @var \AppendIterator<int<0, max>, non-empty-array<array-key, mixed>|object, \Iterator<int<0, max>, non-empty-array<array-key, mixed>|object>> */
+    /** @var \AppendIterator<int, mixed, \Iterator<int, mixed>> */
     private readonly \AppendIterator $source;
-    /** @var \Iterator<int<0, max>, non-empty-array<array-key, mixed>|object>|\NoRewindIterator */
+    /** @var \Iterator<int, mixed>|\NoRewindIterator */
     private iterable $subject;
 
     public function __construct(
@@ -45,7 +45,9 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
      */
     public function feed(...$data): void
     {
-        $this->source->append(new \ArrayIterator($data));
+        /** @var \ArrayIterator<int, InputType> $iterator */
+        $iterator = new \ArrayIterator($data);
+        $this->source->append($iterator);
     }
 
     private function passThroughCoroutine(): \Generator
@@ -60,8 +62,8 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     /**
      * @template Type
      *
-     * @param ExtractorInterface<Type>     $extractor
-     * @param StepRejectionInterface<Type> $rejection
+     * @param ExtractorInterface<Type> $extractor
+     * @param StepRejectionInterface<Type|null> $rejection
      */
     public function extract(
         StepCodeInterface $stepCode,
@@ -71,35 +73,19 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     ): ExtractingInterface {
         $extract = $extractor->extract();
         if (\is_array($extract)) {
-            $this->source->append(
-                $this->runner->run(
-                    new \ArrayIterator($extract),
-                    $this->passThroughCoroutine(),
-                    $rejection,
-                    $state,
-                )
-            );
+            /** @var \ArrayIterator<int, mixed> $iterator */
+            $iterator = new \ArrayIterator($extract);
         } elseif ($extract instanceof \Iterator) {
-            $this->source->append(
-                $this->runner->run(
-                    $extract,
-                    $this->passThroughCoroutine(),
-                    $rejection,
-                    $state,
-                )
-            );
+            /** @var \Iterator<int, mixed> $iterator */
+            $iterator = $extract;
         } elseif ($extract instanceof \Traversable) {
-            $this->source->append(
-                $this->runner->run(
-                    new \IteratorIterator($extract),
-                    $this->passThroughCoroutine(),
-                    $rejection,
-                    $state,
-                )
-            );
+            /** @var \IteratorIterator<int, mixed, \Iterator<int, mixed>> $iterator */
+            $iterator = new \IteratorIterator($extract);
         } else {
             throw new \RuntimeException('Invalid data source, expecting array or Traversable.');
         }
+
+        $this->source->append($this->runner->run($iterator, $this->passThroughCoroutine(), $rejection, $state));
 
         return $this;
     }
@@ -109,7 +95,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
      * @template OutputType
      *
      * @param TransformerInterface<InputType, OutputType> $transformer
-     * @param StepRejectionInterface<InputType>           $rejection
+     * @param StepRejectionInterface<InputType|null> $rejection
      */
     public function transform(
         StepCodeInterface $stepCode,
@@ -118,6 +104,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         StepStateInterface $state,
     ): TransformingInterface {
         if ($transformer instanceof FlushableInterface) {
+            /** @var \AppendIterator<int, mixed, \Iterator<int, mixed>> $iterator */
             $iterator = new \AppendIterator();
 
             $iterator->append(
@@ -158,7 +145,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
      * @template OutputType
      *
      * @param LoaderInterface<InputType, OutputType> $loader
-     * @param StepRejectionInterface<InputType>      $rejection
+     * @param StepRejectionInterface<InputType|null> $rejection
      */
     public function load(
         StepCodeInterface $stepCode,

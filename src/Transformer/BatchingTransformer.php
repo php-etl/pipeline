@@ -66,9 +66,7 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
     public function flush(): ResultBucketInterface
     {
         if (\count($this->batch) <= 0) {
-            /** @var EmptyResultBucket<OutputType> $bucket */
-            $bucket = new EmptyResultBucket();
-            return $bucket;
+            return new EmptyResultBucket();
         }
 
         /* @phpstan-ignore-next-line */

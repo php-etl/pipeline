@@ -21,16 +21,6 @@ class PipelineRunner implements PipelineRunnerInterface
         private readonly LogLevel|string $rejectionLevel = LogLevel::WARNING
     ) {}
 
-    /**
-     * @template InputType
-     * @template OutputType
-     *
-     * @param \Iterator<int<0, max>, InputType|null>                                                                                                                                $source
-     * @param \Generator<int, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
-     * @param StepRejectionInterface<InputType>                                                                                                                                     $rejection
-     *
-     * @return \Iterator<int<0, max>, ResultBucketInterface<OutputType>>
-     */
     public function run(
         \Iterator $source,
         \Generator $coroutine,

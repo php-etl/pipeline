@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket.git",
-                "reference": "3e25f9ca7a85c7c05a72c004407f13da501248c0"
+                "reference": "233beac60eac83944160a5af993c20536d1ea1b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket/zipball/3e25f9ca7a85c7c05a72c004407f13da501248c0",
-                "reference": "3e25f9ca7a85c7c05a72c004407f13da501248c0",
+                "url": "https://api.github.com/repos/php-etl/bucket/zipball/233beac60eac83944160a5af993c20536d1ea1b0",
+                "reference": "233beac60eac83944160a5af993c20536d1ea1b0",
                 "shasum": ""
             },
             "require": {
@@ -61,7 +61,7 @@
                 "issues": "https://github.com/php-etl/bucket/issues",
                 "source": "https://github.com/php-etl/bucket/tree/main"
             },
-            "time": "2023-11-14T11:38:59+00:00"
+            "time": "2023-11-14T14:39:36+00:00"
         },
         {
             "name": "php-etl/bucket-contracts",
@@ -69,12 +69,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/bucket-contracts.git",
-                "reference": "b9595871228a1c41e9da9c6d9e883a28123f4a10"
+                "reference": "64170754cb1f5e556c8e526177be51d905c3b15f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/bucket-contracts/zipball/b9595871228a1c41e9da9c6d9e883a28123f4a10",
-                "reference": "b9595871228a1c41e9da9c6d9e883a28123f4a10",
+                "url": "https://api.github.com/repos/php-etl/bucket-contracts/zipball/64170754cb1f5e556c8e526177be51d905c3b15f",
+                "reference": "64170754cb1f5e556c8e526177be51d905c3b15f",
                 "shasum": ""
             },
             "require": {
@@ -116,7 +116,7 @@
                 "issues": "https://github.com/php-etl/bucket-contracts/issues",
                 "source": "https://github.com/php-etl/bucket-contracts/tree/main"
             },
-            "time": "2023-11-14T08:49:46+00:00"
+            "time": "2023-11-14T14:39:36+00:00"
         },
         {
             "name": "php-etl/pipeline-contracts",
@@ -124,12 +124,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-etl/pipeline-contracts.git",
-                "reference": "03375b74ce813cd6f91c274de60db8523a65f6f7"
+                "reference": "2e752f6a766be9bec01c4ed43629e9b8d64e3059"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/03375b74ce813cd6f91c274de60db8523a65f6f7",
-                "reference": "03375b74ce813cd6f91c274de60db8523a65f6f7",
+                "url": "https://api.github.com/repos/php-etl/pipeline-contracts/zipball/2e752f6a766be9bec01c4ed43629e9b8d64e3059",
+                "reference": "2e752f6a766be9bec01c4ed43629e9b8d64e3059",
                 "shasum": ""
             },
             "require": {
@@ -173,7 +173,7 @@
                 "issues": "https://github.com/php-etl/pipeline-contracts/issues",
                 "source": "https://github.com/php-etl/pipeline-contracts/tree/main"
             },
-            "time": "2023-11-14T14:14:40+00:00"
+            "time": "2023-11-14T14:57:53+00:00"
         },
         {
             "name": "php-etl/satellite-contracts",

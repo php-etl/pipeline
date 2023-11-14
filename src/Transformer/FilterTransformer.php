@@ -45,7 +45,9 @@ class FilterTransformer implements TransformerInterface
                 continue;
             }
 
-            $line = yield new AcceptanceResultBucket($line);
+            /** @var AcceptanceResultBucket<Type> $bucket */
+            $bucket = new AcceptanceResultBucket($line);
+            $line = yield $bucket;
         }
     }
 }

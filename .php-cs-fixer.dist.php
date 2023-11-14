@@ -34,6 +34,7 @@ return (new PhpCsFixer\Config())
         'error_suppression' => true,
         'ereg_to_preg' => true,
         'dir_constant' => true,
+        'phpdoc_align' => ['align' => 'left'],
     ])
     ->setFinder($finder)
     ->setCacheFile('.php-cs-fixer.cache') // forward compatibility with 3.x line

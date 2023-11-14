@@ -11,7 +11,7 @@ use Kiboko\Contract\Bucket\ResultBucketInterface;
  */
 class GeneratorWrapper
 {
-    /** @param \Iterator<int<0, max>, Type> ...$iterators */
+    /** @param \Iterator<int, Type> ...$iterators */
     public function rewind(\Iterator ...$iterators): void
     {
         foreach ($iterators as $iterator) {
@@ -19,7 +19,7 @@ class GeneratorWrapper
         }
     }
 
-    /** @param \Iterator<int<0, max>, Type> ...$iterators */
+    /** @param \Iterator<int, Type> ...$iterators */
     public function next(\Iterator ...$iterators): void
     {
         foreach ($iterators as $iterator) {
@@ -27,7 +27,7 @@ class GeneratorWrapper
         }
     }
 
-    /** @param \Iterator<int<0, max>, Type> ...$iterators */
+    /** @param \Iterator<int, Type> ...$iterators */
     public function valid(\Iterator ...$iterators): bool
     {
         foreach ($iterators as $iterator) {
@@ -40,7 +40,7 @@ class GeneratorWrapper
     }
 
     /**
-     * @param Type                                                             $value
+     * @param Type $value
      * @param \Generator<int, ResultBucketInterface<Type>, Type, void> ...$generators
      */
     public function send($value, \Generator ...$generators): \Generator

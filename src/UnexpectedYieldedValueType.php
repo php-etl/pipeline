@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline;
 
-use Kiboko\Contract\Bucket\ResultBucketInterface;
-
 /**
  * @template InputType
  * @template OutputType
