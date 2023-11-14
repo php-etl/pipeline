@@ -4,14 +4,35 @@ declare(strict_types=1);
 
 namespace Kiboko\Component\Pipeline;
 
+use Kiboko\Contract\Bucket\ResultBucketInterface;
+
+/**
+ * @template InputType of non-empty-array<array-key, mixed>|object
+ * @template OutputType of non-empty-array<array-key, mixed>|object
+ */
 final class UnexpectedYieldedValueType extends \UnexpectedValueException
 {
-    public function __construct(private readonly \Generator $coroutine, string $message = null, int $code = null, ?\Exception $previous = null)
-    {
+    public function __construct(
+        private readonly \Generator $coroutine,
+        string $message = '',
+        int $code = 0,
+        \Throwable $previous = null
+    ) {
         parent::__construct($message, $code, $previous);
     }
 
-    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = null, ?\Exception $previous = null): self
+    public function getCoroutine(): \Generator
+    {
+        return $this->coroutine;
+    }
+
+    /**
+     * @param \Generator<int<0, max>, ResultBucketInterface<OutputType>, InputType, void> $actual
+     * @param list<string>                                                                $expectedTypes
+     *
+     * @return UnexpectedYieldedValueType<InputType, OutputType>
+     */
+    public static function expectingTypes(\Generator $coroutine, array $expectedTypes, $actual, int $code = 0, \Throwable $previous = null): self
     {
         try {
             $re = new \ReflectionGenerator($coroutine);
@@ -26,6 +47,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
             $executionFile = $re->getExecutingFile();
             $executionLine = $re->getExecutingLine();
 
+            /* @phpstan-ignore-next-line */
             return new self(
                 $coroutine,
                 strtr(
@@ -42,6 +64,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
                 $previous
             );
         } catch (\ReflectionException) {
+            /* @phpstan-ignore-next-line */
             return new self(
                 $coroutine,
                 strtr(

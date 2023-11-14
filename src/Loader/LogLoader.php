@@ -11,22 +11,27 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
- * @template Type
+ * @template Type of non-empty-array<array-key, mixed>|object
  *
- * @template-implements LoaderInterface<Type>
+ * @implements LoaderInterface<Type, Type>
  */
 final readonly class LogLoader implements LoaderInterface
 {
-    public function __construct(private LoggerInterface $logger, private string $logLevel = LogLevel::DEBUG)
-    {
-    }
+    public function __construct(private LoggerInterface $logger, private string $logLevel = LogLevel::DEBUG) {}
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type|null>|EmptyResultBucket, Type|null, void> */
+    /** @return \Generator<int<0, max>, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
-        do {
+        /* @phpstan-ignore-next-line */
+        while (true) {
+            if (null === $line) {
+                $line = yield new EmptyResultBucket();
+                continue;
+            }
+
             $this->logger->log($this->logLevel, var_export($line, true));
-        } while ($line = yield new AcceptanceResultBucket($line));
+            $line = yield new AcceptanceResultBucket($line);
+        }
     }
 }

@@ -8,27 +8,35 @@ use Kiboko\Contract\Bucket\AcceptanceResultBucketInterface;
 use Kiboko\Contract\Bucket\RejectionResultBucketInterface;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
-use Kiboko\Contract\Pipeline\RejectionInterface;
-use Kiboko\Contract\Pipeline\StateInterface;
+use Kiboko\Contract\Pipeline\StepRejectionInterface;
+use Kiboko\Contract\Pipeline\StepStateInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
 class PipelineRunner implements PipelineRunnerInterface
 {
-    public function __construct(private readonly LoggerInterface $logger = new NullLogger(), private readonly string $rejectionLevel = LogLevel::WARNING)
-    {
-    }
+    public function __construct(
+        private readonly LoggerInterface $logger = new NullLogger(),
+        private readonly LogLevel|string $rejectionLevel = LogLevel::WARNING
+    ) {}
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template OutputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param \Iterator<int<0, max>, InputType|null>                                                                                                                                $source
+     * @param \Generator<int<0, max>, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
+     * @param StepRejectionInterface<InputType>                                                                                                                                     $rejection
+     *
+     * @return \Iterator<int<0, max>, ResultBucketInterface<OutputType>>
+     */
     public function run(
         \Iterator $source,
         \Generator $coroutine,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): \Iterator {
-        $state->initialize();
-        $rejection->initialize();
-
         $wrapper = new GeneratorWrapper();
         $wrapper->rewind($source, $coroutine);
 
@@ -40,12 +48,17 @@ class PipelineRunner implements PipelineRunnerInterface
             }
 
             if (!$bucket instanceof ResultBucketInterface) {
-                throw UnexpectedYieldedValueType::expectingTypes($coroutine, [ResultBucketInterface::class], $bucket);
+                throw UnexpectedYieldedValueType::expectingTypes($coroutine, [ResultBucketInterface::class, AcceptanceResultBucketInterface::class, RejectionResultBucketInterface::class], $bucket);
             }
 
             if ($bucket instanceof RejectionResultBucketInterface) {
+                $reasons = $bucket->reasons();
                 foreach ($bucket->walkRejection() as $line) {
-                    $rejection->reject($line);
+                    if (null !== $reasons) {
+                        $rejection->rejectWithReason($line, implode(\PHP_EOL, $reasons));
+                    } else {
+                        $rejection->reject($line);
+                    }
                     $state->reject();
 
                     $this->logger->log(
@@ -58,10 +71,6 @@ class PipelineRunner implements PipelineRunnerInterface
                 }
             }
 
-            if (!$bucket instanceof ResultBucketInterface) {
-                throw UnexpectedYieldedValueType::expectingTypes($coroutine, [ResultBucketInterface::class, AcceptanceResultBucketInterface::class, RejectionResultBucketInterface::class], $bucket);
-            }
-
             if ($bucket instanceof AcceptanceResultBucketInterface) {
                 yield from $bucket->walkAcceptance();
                 $state->accept();
@@ -69,8 +78,5 @@ class PipelineRunner implements PipelineRunnerInterface
 
             $wrapper->next($source);
         }
-
-        $state->teardown();
-        $rejection->teardown();
     }
 }

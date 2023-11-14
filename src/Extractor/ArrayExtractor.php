@@ -6,11 +6,15 @@ namespace Kiboko\Component\Pipeline\Extractor;
 
 use Kiboko\Contract\Pipeline\ExtractorInterface;
 
+/**
+ * @template Type of non-empty-array<array-key, mixed>|object
+ *
+ * @implements ExtractorInterface<Type>
+ */
 class ArrayExtractor implements ExtractorInterface
 {
-    public function __construct(private readonly array $data)
-    {
-    }
+    /** @param non-empty-array<array-key, Type> $data */
+    public function __construct(private readonly array $data) {}
 
     /**
      * @return \Generator

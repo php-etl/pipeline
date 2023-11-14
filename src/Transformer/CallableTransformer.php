@@ -8,23 +8,42 @@ use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
-/** @template Type */
+/**
+ * @template InputType of non-empty-array<array-key, mixed>|object
+ * @template OutputType of non-empty-array<array-key, mixed>|object
+ *
+ * @template-implements TransformerInterface<InputType, OutputType>
+ */
 class CallableTransformer implements TransformerInterface
 {
-    /** @var callable */
+    /** @var callable(InputType|null): OutputType */
     private $callback;
 
+    /**
+     * @param callable(InputType $item): OutputType $callback
+     */
     public function __construct(
-        callable $callback
+        callable $callback,
     ) {
         $this->callback = $callback;
     }
 
-    /** @return \Generator<mixed, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
+    /**
+     * @return \Generator<int<0, max>, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void>
+     */
     public function transform(): \Generator
     {
+        $callback = $this->callback;
+
         $line = yield new EmptyResultBucket();
-        do {
-        } while ($line = yield new AcceptanceResultBucket(($this->callback)($line)));
+        /* @phpstan-ignore-next-line */
+        while (true) {
+            if (null === $line) {
+                $line = yield new EmptyResultBucket();
+                continue;
+            }
+
+            $line = yield new AcceptanceResultBucket($callback($line));
+        }
     }
 }

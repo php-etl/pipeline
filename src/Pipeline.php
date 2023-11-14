@@ -11,26 +11,38 @@ use Kiboko\Contract\Pipeline\LoaderInterface;
 use Kiboko\Contract\Pipeline\LoadingInterface;
 use Kiboko\Contract\Pipeline\PipelineInterface;
 use Kiboko\Contract\Pipeline\PipelineRunnerInterface;
-use Kiboko\Contract\Pipeline\RejectionInterface;
-use Kiboko\Contract\Pipeline\RunnableInterface;
 use Kiboko\Contract\Pipeline\StateInterface;
+use Kiboko\Contract\Pipeline\StepCodeInterface;
+use Kiboko\Contract\Pipeline\StepRejectionInterface;
+use Kiboko\Contract\Pipeline\StepStateInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 use Kiboko\Contract\Pipeline\TransformingInterface;
 use Kiboko\Contract\Pipeline\WalkableInterface;
+use Kiboko\Contract\Satellite\RunnableInterface;
 
 class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
+    /** @var \AppendIterator<int<0, max>, non-empty-array<array-key, mixed>|object, \Iterator<int<0, max>, non-empty-array<array-key, mixed>|object>> */
     private readonly \AppendIterator $source;
+    /** @var \Iterator<int<0, max>, non-empty-array<array-key, mixed>|object>|\NoRewindIterator */
     private iterable $subject;
 
-    public function __construct(private readonly PipelineRunnerInterface $runner, ?\Iterator $source = null)
-    {
+    public function __construct(
+        private readonly PipelineRunnerInterface $runner,
+        private readonly StateInterface $state,
+        \Iterator $source = null
+    ) {
         $this->source = new \AppendIterator();
         $this->source->append($source ?? new \EmptyIterator());
 
         $this->subject = new \NoRewindIterator($this->source);
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param InputType ...$data
+     */
     public function feed(...$data): void
     {
         $this->source->append(new \ArrayIterator($data));
@@ -39,14 +51,23 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private function passThroughCoroutine(): \Generator
     {
         $line = yield;
-        while ($line = yield $line) {
+        /* @phpstan-ignore-next-line */
+        while (true) {
+            $line = yield $line;
         }
     }
 
+    /**
+     * @template Type of non-empty-array<array-key, mixed>|object
+     *
+     * @param ExtractorInterface<Type>     $extractor
+     * @param StepRejectionInterface<Type> $rejection
+     */
     public function extract(
+        StepCodeInterface $stepCode,
         ExtractorInterface $extractor,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): ExtractingInterface {
         $extract = $extractor->extract();
         if (\is_array($extract)) {
@@ -55,7 +76,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                     new \ArrayIterator($extract),
                     $this->passThroughCoroutine(),
                     $rejection,
-                    $state
+                    $state,
                 )
             );
         } elseif ($extract instanceof \Iterator) {
@@ -64,7 +85,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                     $extract,
                     $this->passThroughCoroutine(),
                     $rejection,
-                    $state
+                    $state,
                 )
             );
         } elseif ($extract instanceof \Traversable) {
@@ -73,7 +94,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
                     new \IteratorIterator($extract),
                     $this->passThroughCoroutine(),
                     $rejection,
-                    $state
+                    $state,
                 )
             );
         } else {
@@ -83,10 +104,18 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         return $this;
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template OutputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param TransformerInterface<InputType, OutputType> $transformer
+     * @param StepRejectionInterface<InputType>           $rejection
+     */
     public function transform(
+        StepCodeInterface $stepCode,
         TransformerInterface $transformer,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): TransformingInterface {
         if ($transformer instanceof FlushableInterface) {
             $iterator = new \AppendIterator();
@@ -124,10 +153,18 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
         return $this;
     }
 
+    /**
+     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template OutputType of non-empty-array<array-key, mixed>|object
+     *
+     * @param LoaderInterface<InputType, OutputType> $loader
+     * @param StepRejectionInterface<InputType>      $rejection
+     */
     public function load(
+        StepCodeInterface $stepCode,
         LoaderInterface $loader,
-        RejectionInterface $rejection,
-        StateInterface $state,
+        StepRejectionInterface $rejection,
+        StepStateInterface $state,
     ): LoadingInterface {
         if ($loader instanceof FlushableInterface) {
             $iterator = new \AppendIterator();
@@ -168,7 +205,11 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
 
     public function walk(): \Iterator
     {
+        $this->state->initialize();
+
         yield from $this->subject;
+
+        $this->state->teardown();
     }
 
     public function run(int $interval = 1000): int
