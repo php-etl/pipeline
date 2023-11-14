@@ -39,7 +39,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     }
 
     /**
-     * @template InputType of non-empty-array<array-key, mixed>|object
+     * @template InputType
      *
      * @param InputType ...$data
      */
@@ -58,7 +58,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     }
 
     /**
-     * @template Type of non-empty-array<array-key, mixed>|object
+     * @template Type
      *
      * @param ExtractorInterface<Type>     $extractor
      * @param StepRejectionInterface<Type> $rejection
@@ -105,8 +105,8 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     }
 
     /**
-     * @template InputType of non-empty-array<array-key, mixed>|object
-     * @template OutputType of non-empty-array<array-key, mixed>|object
+     * @template InputType
+     * @template OutputType
      *
      * @param TransformerInterface<InputType, OutputType> $transformer
      * @param StepRejectionInterface<InputType>           $rejection
@@ -154,8 +154,8 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     }
 
     /**
-     * @template InputType of non-empty-array<array-key, mixed>|object
-     * @template OutputType of non-empty-array<array-key, mixed>|object
+     * @template InputType
+     * @template OutputType
      *
      * @param LoaderInterface<InputType, OutputType> $loader
      * @param StepRejectionInterface<InputType>      $rejection

@@ -7,7 +7,7 @@ namespace Kiboko\Component\Pipeline;
 use Kiboko\Contract\Bucket\ResultBucketInterface;
 
 /**
- * @template Type of non-empty-array<array-key, mixed>|object
+ * @template Type
  */
 class GeneratorWrapper
 {
@@ -41,7 +41,7 @@ class GeneratorWrapper
 
     /**
      * @param Type                                                             $value
-     * @param \Generator<int<0, max>, ResultBucketInterface<Type>, Type, void> ...$generators
+     * @param \Generator<int, ResultBucketInterface<Type>, Type, void> ...$generators
      */
     public function send($value, \Generator ...$generators): \Generator
     {

@@ -11,8 +11,8 @@ use Kiboko\Contract\Pipeline\FlushableInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template InputType of non-empty-array<array-key, mixed>|object
- * @template OutputType of non-empty-array<array-key, InputType>
+ * @template InputType
+ * @template OutputType of list<InputType>
  *
  * @implements TransformerInterface<InputType, OutputType>
  * @implements FlushableInterface<OutputType>
@@ -29,36 +29,46 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
         private readonly int $batchSize
     ) {}
 
-    /** @return \Generator<int<0, max>, ResultBucketInterface<OutputType>|EmptyResultBucket, InputType|null, void> */
+    /** @return \Generator<int, ResultBucketInterface<OutputType>, InputType|null, void> */
     public function transform(): \Generator
     {
         $this->batch = [];
 
-        $line = yield new EmptyResultBucket();
+        /** @var EmptyResultBucket<OutputType> $bucket */
+        $bucket = new EmptyResultBucket();
+        $line = yield $bucket;
         /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line) {
-                $line = yield new EmptyResultBucket();
+                /** @var EmptyResultBucket<OutputType> $bucket */
+                $bucket = new EmptyResultBucket();
+                $line = yield $bucket;
                 continue;
             }
             $this->batch[] = $line;
 
             if (\count($this->batch) >= $this->batchSize) {
-                /** @phpstan-ignore-next-line */
-                $line = yield new AcceptanceResultBucket($this->batch);
+                /** @var EmptyResultBucket<OutputType> $bucket */
+                $bucket = new AcceptanceResultBucket($this->batch);
+                $line = yield $bucket;
+
                 $this->batch = [];
                 continue;
             }
 
-            $line = yield new EmptyResultBucket();
+            /** @var EmptyResultBucket<OutputType> $bucket */
+            $bucket = new EmptyResultBucket();
+            $line = yield $bucket;
         }
     }
 
-    /** @return AcceptanceResultBucket<OutputType>|EmptyResultBucket */
+    /** @return ResultBucketInterface<OutputType> */
     public function flush(): ResultBucketInterface
     {
         if (\count($this->batch) <= 0) {
-            return new EmptyResultBucket();
+            /** @var EmptyResultBucket<OutputType> $bucket */
+            $bucket = new EmptyResultBucket();
+            return $bucket;
         }
 
         /* @phpstan-ignore-next-line */

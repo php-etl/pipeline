@@ -6,10 +6,11 @@ namespace Kiboko\Component\Pipeline\Loader;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
+use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\LoaderInterface;
 
 /**
- * @template Type of non-empty-array<array-key, mixed>|object
+ * @template Type
  *
  * @implements LoaderInterface<Type, Type>
  */
@@ -28,19 +29,25 @@ abstract class StreamLoader implements LoaderInterface
         $this->stream = $stream;
     }
 
-    /** @return \Generator<int<0, max>, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
+    /** @return \Generator<int, ResultBucketInterface<Type>, Type|null, void> */
     public function load(): \Generator
     {
-        $line = yield new EmptyResultBucket();
+        /** @var EmptyResultBucket<Type> $bucket */
+        $bucket = new EmptyResultBucket();
+        $line = yield $bucket;
         /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line) {
-                $line = yield new EmptyResultBucket();
+                /** @var EmptyResultBucket<Type> $bucket */
+                $bucket = new EmptyResultBucket();
+                $line = yield $bucket;
                 continue;
             }
 
             fwrite($this->stream, $this->formatLine($line));
-            $line = yield new AcceptanceResultBucket($line);
+            /** @var AcceptanceResultBucket<Type> $bucket */
+            $bucket = new AcceptanceResultBucket($line);
+            $line = yield $bucket;
         }
     }
 

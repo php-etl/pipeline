@@ -22,11 +22,11 @@ class PipelineRunner implements PipelineRunnerInterface
     ) {}
 
     /**
-     * @template InputType of non-empty-array<array-key, mixed>|object
-     * @template OutputType of non-empty-array<array-key, mixed>|object
+     * @template InputType
+     * @template OutputType
      *
      * @param \Iterator<int<0, max>, InputType|null>                                                                                                                                $source
-     * @param \Generator<int<0, max>, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
+     * @param \Generator<int, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
      * @param StepRejectionInterface<InputType>                                                                                                                                     $rejection
      *
      * @return \Iterator<int<0, max>, ResultBucketInterface<OutputType>>

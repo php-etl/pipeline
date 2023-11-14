@@ -6,11 +6,12 @@ namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
+use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template InputType of non-empty-array<array-key, mixed>|object
- * @template OutputType of non-empty-array<array-key, mixed>|object
+ * @template InputType
+ * @template OutputType
  *
  * @template-implements TransformerInterface<InputType, OutputType>
  */
@@ -20,7 +21,7 @@ class CallableTransformer implements TransformerInterface
     private $callback;
 
     /**
-     * @param callable(InputType $item): OutputType $callback
+     * @param callable(InputType|null $item): OutputType $callback
      */
     public function __construct(
         callable $callback,
@@ -28,22 +29,26 @@ class CallableTransformer implements TransformerInterface
         $this->callback = $callback;
     }
 
-    /**
-     * @return \Generator<int<0, max>, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void>
-     */
+    /** @return \Generator<int, ResultBucketInterface<OutputType>, InputType|null, void> */
     public function transform(): \Generator
     {
         $callback = $this->callback;
 
-        $line = yield new EmptyResultBucket();
+        /** @var EmptyResultBucket<OutputType> $bucket */
+        $bucket = new EmptyResultBucket();
+        $line = yield $bucket;
         /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line) {
-                $line = yield new EmptyResultBucket();
+                /** @var EmptyResultBucket<OutputType> $bucket */
+                $bucket = new EmptyResultBucket();
+                $line = yield $bucket;
                 continue;
             }
 
-            $line = yield new AcceptanceResultBucket($callback($line));
+            /** @var AcceptanceResultBucket<OutputType> $bucket */
+            $bucket = new AcceptanceResultBucket($callback($line));
+            $line = yield $bucket;
         }
     }
 }

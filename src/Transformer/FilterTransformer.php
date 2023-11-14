@@ -6,10 +6,11 @@ namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
+use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template Type of non-empty-array<array-key, mixed>|object
+ * @template Type
  *
  * @implements TransformerInterface<Type, Type>
  */
@@ -26,17 +27,21 @@ class FilterTransformer implements TransformerInterface
     }
 
     /**
-     * @return \Generator<int<0, max>, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void>
+     * @return \Generator<int, ResultBucketInterface<Type>, Type|null, void>
      */
     public function transform(): \Generator
     {
         $callback = $this->callback;
 
-        $line = yield new EmptyResultBucket();
+        /** @var EmptyResultBucket<Type> $bucket */
+        $bucket = new EmptyResultBucket();
+        $line = yield $bucket;
         /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line || !$callback($line)) {
-                $line = yield new EmptyResultBucket();
+                /** @var EmptyResultBucket<Type> $bucket */
+                $bucket = new EmptyResultBucket();
+                $line = yield $bucket;
                 continue;
             }
 

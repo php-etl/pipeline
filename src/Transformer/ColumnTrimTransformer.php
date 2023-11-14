@@ -6,11 +6,12 @@ namespace Kiboko\Component\Pipeline\Transformer;
 
 use Kiboko\Component\Bucket\AcceptanceResultBucket;
 use Kiboko\Component\Bucket\EmptyResultBucket;
+use Kiboko\Contract\Bucket\ResultBucketInterface;
 use Kiboko\Contract\Pipeline\TransformerInterface;
 
 /**
- * @template InputType of non-empty-array<array-key, mixed>|object
- * @template OutputType of non-empty-array<array-key, mixed>|object
+ * @template InputType of array<array-key, string>
+ * @template OutputType of array<array-key, string>
  *
  * @implements TransformerInterface<InputType, OutputType>
  */
@@ -21,14 +22,18 @@ class ColumnTrimTransformer implements TransformerInterface
         private readonly array $columnsToTrim
     ) {}
 
-    /** @return \Generator<int<0, max>, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void> */
+    /** @return \Generator<int, ResultBucketInterface<OutputType>, InputType|null, void> */
     public function transform(): \Generator
     {
-        $line = yield new EmptyResultBucket();
+        /** @var EmptyResultBucket<OutputType> $bucket */
+        $bucket = new EmptyResultBucket();
+        $line = yield $bucket;
         /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line) {
-                $line = yield new EmptyResultBucket();
+                /** @var EmptyResultBucket<OutputType> $bucket */
+                $bucket = new EmptyResultBucket();
+                $line = yield $bucket;
                 continue;
             }
             foreach ($this->columnsToTrim as $column) {
@@ -38,8 +43,10 @@ class ColumnTrimTransformer implements TransformerInterface
 
                 $line[$column] = trim((string) $line[$column]);
             }
-            /** @phpstan-ignore-next-line */
-            $line = yield new AcceptanceResultBucket($line);
+
+            /** @var AcceptanceResultBucket<OutputType> $bucket */
+            $bucket = new AcceptanceResultBucket($line);
+            $line = yield $bucket;
         }
     }
 }
