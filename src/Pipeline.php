@@ -22,9 +22,9 @@ use Kiboko\Contract\Satellite\RunnableInterface;
 
 class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterface
 {
-    /** @var \AppendIterator<positive-int, non-empty-array<array-key, mixed>|object, \Iterator<positive-int, non-empty-array<array-key, mixed>|object>> */
+    /** @var \AppendIterator<int<0, max>, non-empty-array<array-key, mixed>|object, \Iterator<int<0, max>, non-empty-array<array-key, mixed>|object>> */
     private readonly \AppendIterator $source;
-    /** @var \Iterator<positive-int, non-empty-array<array-key, mixed>|object>|\NoRewindIterator */
+    /** @var \Iterator<int<0, max>, non-empty-array<array-key, mixed>|object>|\NoRewindIterator */
     private iterable $subject;
 
     public function __construct(

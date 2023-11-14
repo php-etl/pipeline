@@ -30,11 +30,11 @@ class PipelineRunner implements PipelineRunnerInterface
      * @template InputType of non-empty-array<array-key, mixed>|object
      * @template OutputType of non-empty-array<array-key, mixed>|object
      *
-     * @param \Iterator<positive-int, InputType|null> $source
-     * @param \Generator<positive-int, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
+     * @param \Iterator<int<0, max>, InputType|null> $source
+     * @param \Generator<int<0, max>, ResultBucketInterface<OutputType>|AcceptanceResultBucketInterface<InputType>|RejectionResultBucketInterface<InputType>|null, InputType, void> $coroutine
      * @param StepRejectionInterface<InputType> $rejection
      * @param StepStateInterface $state
-     * @return \Iterator<positive-int, ResultBucketInterface<OutputType>>
+     * @return \Iterator<int<0, max>, ResultBucketInterface<OutputType>>
      */
     public function run(
         \Iterator $source,

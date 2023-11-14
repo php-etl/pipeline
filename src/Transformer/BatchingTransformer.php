@@ -19,7 +19,7 @@ use Kiboko\Contract\Pipeline\TransformerInterface;
  */
 class BatchingTransformer implements TransformerInterface, FlushableInterface
 {
-    /** @var array<array-key, InputType> */
+    /** @var list<InputType> */
     private array $batch = [];
 
     /**
@@ -30,7 +30,7 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
     ) {
     }
 
-    /** @return \Generator<positive-int, ResultBucketInterface<OutputType>|EmptyResultBucket, InputType|null, void> */
+    /** @return \Generator<int<0, max>, ResultBucketInterface<OutputType>|EmptyResultBucket, InputType|null, void> */
     public function transform(): \Generator
     {
         $this->batch = [];

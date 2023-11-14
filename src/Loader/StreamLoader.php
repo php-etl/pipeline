@@ -28,7 +28,7 @@ abstract class StreamLoader implements LoaderInterface
         $this->stream = $stream;
     }
 
-    /** @return \Generator<positive-int, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
+    /** @return \Generator<int<0, max>, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();

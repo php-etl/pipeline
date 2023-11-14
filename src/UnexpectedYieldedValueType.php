@@ -27,7 +27,7 @@ final class UnexpectedYieldedValueType extends \UnexpectedValueException
     }
 
     /**
-     * @param \Generator<positive-int, ResultBucketInterface<OutputType>, InputType, void> $actual
+     * @param \Generator<int<0, max>, ResultBucketInterface<OutputType>, InputType, void> $actual
      * @param list<string> $expectedTypes
      * @param mixed $actual
      *

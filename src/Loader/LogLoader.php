@@ -21,7 +21,7 @@ final readonly class LogLoader implements LoaderInterface
     {
     }
 
-    /** @return \Generator<positive-int, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
+    /** @return \Generator<int<0, max>, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();

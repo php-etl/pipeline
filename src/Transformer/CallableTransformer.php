@@ -29,7 +29,7 @@ class CallableTransformer implements TransformerInterface
     }
 
     /**
-     * @return \Generator<positive-int, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void>
+     * @return \Generator<int<0, max>, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void>
      */
     public function transform(): \Generator
     {
