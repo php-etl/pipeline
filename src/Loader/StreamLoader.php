@@ -32,9 +32,9 @@ abstract class StreamLoader implements LoaderInterface
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
-            if ($line === null) {
+            if (null === $line) {
                 $line = yield new EmptyResultBucket();
                 continue;
             }
@@ -46,7 +46,6 @@ abstract class StreamLoader implements LoaderInterface
 
     /**
      * @param Type|null $line
-     * @return string
      */
     abstract protected function formatLine(mixed $line): string;
 }

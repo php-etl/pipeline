@@ -19,14 +19,13 @@ class ColumnTrimTransformer implements TransformerInterface
     /** @param list<string> $columnsToTrim */
     public function __construct(
         private readonly array $columnsToTrim
-    ) {
-    }
+    ) {}
 
     /** @return \Generator<int<0, max>, AcceptanceResultBucket<OutputType>|EmptyResultBucket, InputType|null, void> */
     public function transform(): \Generator
     {
         $line = yield new EmptyResultBucket();
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line) {
                 $line = yield new EmptyResultBucket();

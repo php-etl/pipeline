@@ -10,8 +10,7 @@ final readonly class StepCode implements StepCodeInterface
 {
     private function __construct(
         private string $reference,
-    ) {
-    }
+    ) {}
 
     public static function fromString(string $reference): self
     {

@@ -27,8 +27,7 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
      */
     public function __construct(
         private readonly int $batchSize
-    ) {
-    }
+    ) {}
 
     /** @return \Generator<int<0, max>, ResultBucketInterface<OutputType>|EmptyResultBucket, InputType|null, void> */
     public function transform(): \Generator
@@ -36,15 +35,15 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
         $this->batch = [];
 
         $line = yield new EmptyResultBucket();
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
-            if ($line === null) {
+            if (null === $line) {
                 $line = yield new EmptyResultBucket();
                 continue;
             }
             $this->batch[] = $line;
 
-            if (count($this->batch) >= $this->batchSize) {
+            if (\count($this->batch) >= $this->batchSize) {
                 /** @phpstan-ignore-next-line */
                 $line = yield new AcceptanceResultBucket($this->batch);
                 $this->batch = [];
@@ -58,10 +57,11 @@ class BatchingTransformer implements TransformerInterface, FlushableInterface
     /** @return AcceptanceResultBucket<OutputType>|EmptyResultBucket */
     public function flush(): ResultBucketInterface
     {
-        if (count($this->batch) <= 0) {
+        if (\count($this->batch) <= 0) {
             return new EmptyResultBucket();
         }
-        /** @phpstan-ignore-next-line */
+
+        /* @phpstan-ignore-next-line */
         return new AcceptanceResultBucket($this->batch);
     }
 }

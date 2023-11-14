@@ -15,7 +15,7 @@ use Kiboko\Contract\Pipeline\TransformerInterface;
  */
 class FilterTransformer implements TransformerInterface
 {
-    /** @var callable(Type $item): bool */
+    /** @var callable(Type): bool */
     private $callback;
 
     /** @param callable(Type $item): bool $callback */
@@ -33,7 +33,7 @@ class FilterTransformer implements TransformerInterface
         $callback = $this->callback;
 
         $line = yield new EmptyResultBucket();
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
             if (null === $line || !$callback($line)) {
                 $line = yield new EmptyResultBucket();

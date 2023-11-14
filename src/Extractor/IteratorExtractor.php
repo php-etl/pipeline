@@ -8,14 +8,13 @@ use Kiboko\Contract\Pipeline\ExtractorInterface;
 
 /**
  * @template Type of non-empty-array<array-key, mixed>|object
+ *
  * @implements ExtractorInterface<Type>
  */
 class IteratorExtractor implements ExtractorInterface
 {
     /** @param \Traversable<mixed, Type> $traversable */
-    public function __construct(private readonly \Traversable $traversable)
-    {
-    }
+    public function __construct(private readonly \Traversable $traversable) {}
 
     /**
      * @return \Generator

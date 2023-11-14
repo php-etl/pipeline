@@ -40,7 +40,7 @@ class GeneratorWrapper
     }
 
     /**
-     * @param Type $value
+     * @param Type                                                             $value
      * @param \Generator<int<0, max>, ResultBucketInterface<Type>, Type, void> ...$generators
      */
     public function send($value, \Generator ...$generators): \Generator

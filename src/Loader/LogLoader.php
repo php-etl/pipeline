@@ -17,17 +17,15 @@ use Psr\Log\LogLevel;
  */
 final readonly class LogLoader implements LoaderInterface
 {
-    public function __construct(private LoggerInterface $logger, private string $logLevel = LogLevel::DEBUG)
-    {
-    }
+    public function __construct(private LoggerInterface $logger, private string $logLevel = LogLevel::DEBUG) {}
 
     /** @return \Generator<int<0, max>, AcceptanceResultBucket<Type>|EmptyResultBucket, Type|null, void> */
     public function load(): \Generator
     {
         $line = yield new EmptyResultBucket();
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
-            if ($line === null) {
+            if (null === $line) {
                 $line = yield new EmptyResultBucket();
                 continue;
             }

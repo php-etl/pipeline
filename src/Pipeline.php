@@ -30,7 +30,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     public function __construct(
         private readonly PipelineRunnerInterface $runner,
         private readonly StateInterface $state,
-        ?\Iterator $source = null
+        \Iterator $source = null
     ) {
         $this->source = new \AppendIterator();
         $this->source->append($source ?? new \EmptyIterator());
@@ -42,7 +42,6 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
      * @template InputType of non-empty-array<array-key, mixed>|object
      *
      * @param InputType ...$data
-     * @return void
      */
     public function feed(...$data): void
     {
@@ -52,7 +51,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     private function passThroughCoroutine(): \Generator
     {
         $line = yield;
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
             $line = yield $line;
         }
@@ -61,7 +60,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
     /**
      * @template Type of non-empty-array<array-key, mixed>|object
      *
-     * @param ExtractorInterface<Type> $extractor
+     * @param ExtractorInterface<Type>     $extractor
      * @param StepRejectionInterface<Type> $rejection
      */
     public function extract(
@@ -110,7 +109,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
      * @template OutputType of non-empty-array<array-key, mixed>|object
      *
      * @param TransformerInterface<InputType, OutputType> $transformer
-     * @param StepRejectionInterface<InputType> $rejection
+     * @param StepRejectionInterface<InputType>           $rejection
      */
     public function transform(
         StepCodeInterface $stepCode,
@@ -159,7 +158,7 @@ class Pipeline implements PipelineInterface, WalkableInterface, RunnableInterfac
      * @template OutputType of non-empty-array<array-key, mixed>|object
      *
      * @param LoaderInterface<InputType, OutputType> $loader
-     * @param StepRejectionInterface<InputType> $rejection
+     * @param StepRejectionInterface<InputType>      $rejection
      */
     public function load(
         StepCodeInterface $stepCode,

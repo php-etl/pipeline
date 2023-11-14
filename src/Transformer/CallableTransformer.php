@@ -16,7 +16,7 @@ use Kiboko\Contract\Pipeline\TransformerInterface;
  */
 class CallableTransformer implements TransformerInterface
 {
-    /** @var callable(InputType|null $item): OutputType */
+    /** @var callable(InputType|null): OutputType */
     private $callback;
 
     /**
@@ -36,9 +36,9 @@ class CallableTransformer implements TransformerInterface
         $callback = $this->callback;
 
         $line = yield new EmptyResultBucket();
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         while (true) {
-            if ($line === null) {
+            if (null === $line) {
                 $line = yield new EmptyResultBucket();
                 continue;
             }
