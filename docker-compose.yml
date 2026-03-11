@@ -7,7 +7,7 @@ services:
     user: docker:docker
     volumes:
       - ./.docker/php@7.2/cli/config/memory.ini:/usr/local/etc/php/conf.d/memory.ini:ro
-      - ./:/var/www/html
+      - ./:/app
     restart: "no"
 
   sh-xdebug:
@@ -17,7 +17,7 @@ services:
     volumes:
       - ./.docker/php@7.2/cli-xdebug/config/memory.ini:/usr/local/etc/php/conf.d/memory.ini:ro
       - ./.docker/php@7.2/cli-xdebug/config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
-      - ./:/var/www/html
+      - ./:/app
     restart: "no"
 
   composer:
