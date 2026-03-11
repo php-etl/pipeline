@@ -16,7 +16,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "psr/log": "^3.0",
         "php-etl/bucket": "*",
         "php-etl/pipeline-contracts": "0.5.*",
@@ -24,11 +24,11 @@
     },
     "require-dev": {
         "phpunit/php-invoker": "^4.0",
-        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^10.0",
         "friendsofphp/php-cs-fixer": "^3.38",
         "infection/infection": "^0.26.18",
-        "rector/rector": "^0.15"
+        "rector/rector": "^2.0"
     },
     "provide": {
         "php-etl/pipeline-implementation": "0.5.0"
